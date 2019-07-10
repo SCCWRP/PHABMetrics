@@ -185,7 +185,7 @@ channelmorph <- function(data){
         smspimlt <- smspi * log(smspi)
         
         # step 6
-        res <- round(sum(smspimlt, na.rm = T) * -1, 2)
+        res <- sum(smspimlt, na.rm = T) * -1
         
         return(res)
 
@@ -220,6 +220,9 @@ channelmorph <- function(data){
     as.data.frame(stringsAsFactors = F) %>%
     tibble::column_to_rownames('id')
 
+  # Now we should round the H_FlowHab.result value to 2 decimal places
+  FlowHab$H_FlowHab.result <- round(FlowHab$H_FlowHab.result, 2)
+  
   # add H_FlowHab, Ev_FlowHab to results
   results <- as.data.frame(results, stringsAsFactors = F)
   
