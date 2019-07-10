@@ -287,7 +287,8 @@ substrate <- function(data){
     tidyr::nest() %>%
     dplyr::mutate(
       SB_PT_D50.result = purrr::map(data, function(df){
-        sort(df$value)[df$PTD50index[1]]
+        #sort(df$value)[df$PTD50index[1]]
+        median(df$value, na.rm = T)
       }),
       SB_PT_D10.result = purrr::map(data, function(df){
         sort(df$value)[df$PTD10index[1]]
