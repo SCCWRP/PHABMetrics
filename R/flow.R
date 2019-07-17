@@ -60,12 +60,16 @@ flow <- function(data){
   
   rownames(FlowDischarge) <- FlowDischarge$id
   FlowDischarge <- FlowDischarge %>% dplyr::select(-id)
-  print(FlowDischarge)
+  #print(FlowDischarge)
+  print("Creating the FL_Q_F vector")
   FL_Q_F <- FlowDischarge$FL_Q_F.result
+  print("Creating the FL_Q_F.count vector")
   FL_Q_F.count <- FlowDischarge$FL_Q_F.count
   names(FL_Q_F) <- rownames(FlowDischarge)
   
+  print("Creating the FL_Q_M vector")
   FL_Q_M <- FlowDischarge$FL_Q_M.result
+  print("Creating the FL_Q_F.count vector")
   FL_Q_M.count <- FlowDischarge$FL_Q_M.count
   names(FL_Q_M) <- rownames(FlowDischarge)
   
@@ -76,7 +80,9 @@ flow <- function(data){
   test <-velocity[, c("id", "StationCode", "SampleDate", "Replicate", "AnalyteName", "Result",  "ResQualCode", "QACode")]
   test2 <- flow[, c("id", "StationCode", "SampleDate", "Replicate", "AnalyteName", "Result",  "ResQualCode", "QACode")]
   
+  print("rbind test and test2")
   tempp <- (rbind(test, test2))
+  print("reshaping tempp to get vmethod")
   vmethod <- (reshape::cast(tempp, id + Replicate ~ AnalyteName, value="Result", fun.aggregate=mean))
   
   
@@ -92,6 +98,7 @@ flow <- function(data){
   #FL_Q_M <- FL_Q_F*0.0283168466
   
   ###Format Data Frame###
+  print("Creating the neutral dataframe")
   neutral$Result[neutral$ResQualCode=="NR"] <- NA
   neutral$Location <- rep(NA, length(neutral$id))
   neutral$Location[grep("Upper Section Point", neutral$LocationCode)] <- "Upper"
@@ -149,6 +156,7 @@ flow <- function(data){
   }
 
   ###Format Results###
+  print("Format Results")
   result<-as.data.frame(matrix(NA, ncol=11, nrow=length(union(names(FL_N_M), names(FL_Q_M)))))
   rownames(result)<-union(names(FL_N_M), names(FL_Q_M))
   
@@ -168,6 +176,7 @@ flow <- function(data){
     mean(c(a[i], b[i]), na.rm=T)}, a=result$FL_N_M, b=result$FL_Q_M))
   
   ###Mean and max water velocity###
+  print("Creating the velocity_Q vector")
   velocity_Q <- tapply(tempp[tempp$AnalyteName == "Velocity",]$Result, tempp[tempp$AnalyteName == "Velocity", ]$id, max)
   result[which(rownames(result)%in%names(velocity_Q)), 7] <- velocity_Q
 
@@ -221,6 +230,7 @@ flow <- function(data){
   result$PWVZ.result <- round(result$PWVZ.result, 1)
 
   # This is to add count_calc for the Max and Mean Velocity metrics
+  print("This is to add count_calc for the Max and Mean Velocity metrics")
   counts <- data %>% 
   dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity') %>%
   dplyr::group_by(id) %>%
