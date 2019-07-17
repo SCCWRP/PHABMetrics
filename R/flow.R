@@ -56,22 +56,23 @@ flow <- function(data){
     dplyr::mutate(
       FL_Q_M.result = round(FL_Q_F.result / 35.32, 3),
       FL_Q_M.count = FL_Q_F.count
-    ) %>% as.data.frame
+    ) %>% as.data.frame %>%
+      tibble::column_to_rownames(c('id'))
   
-  rownames(FlowDischarge) <- FlowDischarge$id
-  FlowDischarge <- FlowDischarge %>% dplyr::select(-id)
+  #rownames(FlowDischarge) <- FlowDischarge$id
+  #FlowDischarge <- FlowDischarge %>% dplyr::select(-id)
   #print(FlowDischarge)
-  print("Creating the FL_Q_F vector")
-  FL_Q_F <- FlowDischarge$FL_Q_F.result
-  print("Creating the FL_Q_F.count vector")
-  FL_Q_F.count <- FlowDischarge$FL_Q_F.count
-  names(FL_Q_F) <- rownames(FlowDischarge)
+  #print("Creating the FL_Q_F vector")
+  #FL_Q_F <- FlowDischarge$FL_Q_F.result
+  #print("Creating the FL_Q_F.count vector")
+  #FL_Q_F.count <- FlowDischarge$FL_Q_F.count
+  #names(FL_Q_F) <- rownames(FlowDischarge)
   
-  print("Creating the FL_Q_M vector")
-  FL_Q_M <- FlowDischarge$FL_Q_M.result
-  print("Creating the FL_Q_F.count vector")
-  FL_Q_M.count <- FlowDischarge$FL_Q_M.count
-  names(FL_Q_M) <- rownames(FlowDischarge)
+  #print("Creating the FL_Q_M vector")
+  #FL_Q_M <- FlowDischarge$FL_Q_M.result
+  #print("Creating the FL_Q_F.count vector")
+  #FL_Q_M.count <- FlowDischarge$FL_Q_M.count
+  #names(FL_Q_M) <- rownames(FlowDischarge)
   
   velocity<-data
   flow<-data
@@ -163,13 +164,8 @@ flow <- function(data){
   
   result[which(rownames(result)%in%names(FL_N_F)), 1]<-FL_N_F
   result[which(rownames(result)%in%names(FL_N_M)), 2]<-FL_N_M
-  result[which(rownames(result)%in%names(FL_Q_F)), 3]<-FL_Q_F
-  result[which(rownames(result)%in%names(FL_Q_M)), 4]<-FL_Q_M
-  colnames(result)<-c("FL_N_F.result",  "FL_N_M.result",  "FL_Q_F.result",  "FL_Q_M.result",  "FL_F.result",  "FL_M.result")
+  colnames(result)<-c("FL_N_F.result",  "FL_N_M.result", "FL_F.result",  "FL_M.result")
   
-  print("Append the counts to the results dataframe")
-  result$FL_Q_F.count <- FL_Q_F.count
-  result$FL_Q_M.count <- FL_Q_M.count
    
   print("Append FL_F and FL_M result values")
   result$FL_F.result <- unlist(lapply(1:length(result$FL_N_F), FUN=function(i, a, b){
@@ -266,7 +262,9 @@ flow <- function(data){
   as.data.frame %>%
   tibble::column_to_rownames('id')
 
-  result <- merge(result, counts, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
+  #result <- merge(result, counts, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
+  result <- merge(result, counts, by = 'row.names', all.x = T) %>% tibble::column_to_rownames('Row.names')
+  result <- merge(result, FlowDischarge, by = 'row.names', all.x = T) %>% tibble::column_to_rownames('Row.names')
                            
   return(result)
   
