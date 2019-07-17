@@ -33,7 +33,7 @@ flow <- function(data){
 
   data <- data[which(data$AnalyteName %in% c('Distance from Bank', 'StationWaterDepth', 'Velocity', 'Distance, Float', 'Float Time', 'Wetted Width')),]
   
-  xlocation <- data[data$LocationCode == 'X',] %>% dplyr::select(-UnitName)
+  xlocation <- data[data$LocationCode == 'X',] %>% dplyr::select(-UnitName, VariableResult)
   xlocation$Result <- as.numeric(as.character(xlocation$Result))
   FlowDischarge <- xlocation %>% 
     tidyr::spread(key = AnalyteName, value = Result) %>%
