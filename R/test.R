@@ -1,12 +1,12 @@
 library(tidyverse)
 #library(plyr)
 library(PHABMetrics)
-data <- read.csv("data/PSA2013_FieldAndHabitat_RBIND_FILLED.csv")
+fieldandhabitat <- read.csv("data/PSA2013_FieldAndHabitat_RBIND_FILLED.csv")
 
-data <- data %>% 
+fieldandhabitat <- fieldandhabitat %>% 
   mutate(
     id = StationCode
   )
-data$id <- data$StationCode
+fieldandhabitat$id <- fieldandhabitat$StationCode
 
-data <- data %>% select(colnames(sampdat))
+fieldandhabitat <- fieldandhabitat %>% select(colnames(sampdat))
