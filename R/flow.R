@@ -30,11 +30,10 @@ flow <- function(data){
    } 
    return(as.vector(res))
   }
-  print(data)
+
   data <- data[which(data$AnalyteName %in% c('Distance from Bank', 'StationWaterDepth', 'Velocity', 'Distance, Float', 'Float Time', 'Wetted Width')),]
-    
   
-  xlocation <- data[data$LocationCode == 'X',] %>% dplyr::select(-c(UnitName, VariableResult))
+  xlocation <- data[data$LocationCode == 'X',] %>% dplyr::select(-UnitName, VariableResult)
   xlocation$Result <- as.numeric(as.character(xlocation$Result))
   FlowDischarge <- xlocation %>% 
     tidyr::spread(key = AnalyteName, value = Result) %>%
@@ -58,26 +57,26 @@ flow <- function(data){
       FL_Q_M.result = round(FL_Q_F.result / 35.32, 3),
       FL_Q_M.count = FL_Q_F.count
     ) %>% as.data.frame %>%
-    tibble::column_to_rownames(c('id'))
+      tibble::column_to_rownames(c('id'))
   
   #rownames(FlowDischarge) <- FlowDischarge$id
   #FlowDischarge <- FlowDischarge %>% dplyr::select(-id)
   #print(FlowDischarge)
-  print("Creating the FL_Q_F vector")
-  FL_Q_F <- FlowDischarge$FL_Q_F.result
-  print("Creating the FL_Q_F.count vector")
-  FL_Q_F.count <- FlowDischarge$FL_Q_F.count
-  names(FL_Q_F) <- rownames(FlowDischarge)
+  #print("Creating the FL_Q_F vector")
+  #FL_Q_F <- FlowDischarge$FL_Q_F.result
+  #print("Creating the FL_Q_F.count vector")
+  #FL_Q_F.count <- FlowDischarge$FL_Q_F.count
+  #names(FL_Q_F) <- rownames(FlowDischarge)
   
-  print("Creating the FL_Q_M vector")
-  FL_Q_M <- FlowDischarge$FL_Q_M.result
-  print("Creating the FL_Q_F.count vector")
-  FL_Q_M.count <- FlowDischarge$FL_Q_M.count
-  names(FL_Q_M) <- rownames(FlowDischarge)
+  #print("Creating the FL_Q_M vector")
+  #FL_Q_M <- FlowDischarge$FL_Q_M.result
+  #print("Creating the FL_Q_F.count vector")
+  #FL_Q_M.count <- FlowDischarge$FL_Q_M.count
+  #names(FL_Q_M) <- rownames(FlowDischarge)
   
-  velocity <- data
-  flow <- data
-  neutral <- data
+  velocity<-data
+  flow<-data
+  neutral<-data
   
   test <-velocity[, c("id", "StationCode", "SampleDate", "Replicate", "AnalyteName", "Result",  "ResQualCode", "QACode")]
   test2 <- flow[, c("id", "StationCode", "SampleDate", "Replicate", "AnalyteName", "Result",  "ResQualCode", "QACode")]
@@ -165,19 +164,14 @@ flow <- function(data){
   
   result[which(rownames(result)%in%names(FL_N_F)), 1]<-FL_N_F
   result[which(rownames(result)%in%names(FL_N_M)), 2]<-FL_N_M
-  #result[which(rownames(result)%in%names(FL_Q_F)), 3]<-FL_Q_F
-  #result[which(rownames(result)%in%names(FL_Q_M)), 4]<-FL_Q_M
   colnames(result)<-c("FL_N_F.result",  "FL_N_M.result", "FL_F.result",  "FL_M.result")
   
-  #print("Append the counts to the results dataframe")
-  #result$FL_Q_F.count <- FL_Q_F.count
-  #result$FL_Q_M.count <- FL_Q_M.count
    
-  print("Append FL_F and FL_M result values")
-  result$FL_F.result <- unlist(lapply(1:length(result$FL_N_F), FUN=function(i, a, b){
-    mean(c(a[i], b[i]), na.rm=T)}, a=result$FL_N_F, b=result$FL_Q_F))
-  result$FL_M.result <- unlist(lapply(1:length(result$FL_N_F), FUN=function(i, a, b){
-    mean(c(a[i], b[i]), na.rm=T)}, a=result$FL_N_M, b=result$FL_Q_M))
+  #print("Append FL_F and FL_M result values")
+  #result$FL_F.result <- unlist(lapply(1:length(result$FL_N_F), FUN=function(i, a, b){
+    #mean(c(a[i], b[i]), na.rm=T)}, a=result$FL_N_F, b=result$FL_Q_F))
+  #result$FL_M.result <- unlist(lapply(1:length(result$FL_N_F), FUN=function(i, a, b){
+    #mean(c(a[i], b[i]), na.rm=T)}, a=result$FL_N_M, b=result$FL_Q_M))
   
   ###Mean and max water velocity###
   print("Creating the velocity_Q vector")
@@ -268,9 +262,11 @@ flow <- function(data){
   as.data.frame %>%
   tibble::column_to_rownames('id')
 
+  #result <- merge(result, counts, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
   result <- merge(result, counts, by = 'row.names', all.x = T) %>% tibble::column_to_rownames('Row.names')
   result <- merge(result, FlowDischarge, by = 'row.names', all.x = T) %>% tibble::column_to_rownames('Row.names')
                            
   return(result)
   
 }
+
