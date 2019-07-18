@@ -158,8 +158,8 @@ flow <- function(data){
 
   ###Format Results###
   print("Format Results")
-  result<-as.data.frame(matrix(NA, ncol=11, nrow=length(union(names(FL_N_M), names(FL_Q_M)))))
-  rownames(result)<-union(names(FL_N_M), names(FL_Q_M))
+  result<-as.data.frame(matrix(NA, ncol=11, nrow=length(union(names(FL_N_M)))))
+  rownames(result)<-union(names(FL_N_M))
   
   
   result[which(rownames(result)%in%names(FL_N_F)), 1]<-FL_N_F
