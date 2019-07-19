@@ -32,7 +32,7 @@ flow <- function(data){
   data <- data[which(data$AnalyteName %in% c('Distance from Bank', 'StationWaterDepth', 'Velocity', 'Distance, Float', 'Float Time', 'Wetted Width')),]
   
   FlowMetrics <- data %>% 
-    dplyr::group_by(StationCode, SampleDate) %>%
+    dplyr::group_by(id) %>%
     tidyr::nest() %>%
     dplyr::mutate(
       FL_Q_F.result = purrr::map(data, function(df){
@@ -42,7 +42,6 @@ flow <- function(data){
         df <- df %>% tidyr::spread(key = AnalyteName, value = Result)
         df$Replicate <- as.numeric(as.character(df$Replicate))
         df <- dplyr::arrange(df, Replicate)
-        print(df)
         return(sum(calcDistances(df[['Distance from Bank']]) * df$StationWaterDepth * 0.001076 * df$Velocity))
       }),
       FL_Q_F.count = purrr::map(data, function(df){
@@ -88,8 +87,6 @@ flow <- function(data){
           ) %>% select(-data) %>%
           tidyr::unnest()
         avg_velocity <- mean(velocity_dataframe$velocities, na.rm = T)
-        print(paste('avg_area',avg_area))
-        print(paste('avg_velocity',avg_velocity))
         return(avg_area * avg_velocity)
       }),
       FL_N_F.result = as.numeric(as.character(FL_N_M.result)) * 35.32,
@@ -131,8 +128,10 @@ flow <- function(data){
       PWVZ.count = XWV_M.count
     ) %>% select(-data) %>%
     tidyr::unnest() %>%
-    as.data.frame %>%
+    as.data.frame(stringsAsFactors = FALSE) %>%
     tibble::column_to_rownames('id')
+  
+  
   
   FlowMetrics$FL_Q_F.result <- FlowMetrics$FL_Q_F.result %>% round(3)
   FlowMetrics$FL_Q_M.result <- FlowMetrics$FL_Q_M.result %>% round(3)
