@@ -9,7 +9,7 @@
 #' @examples 
 #' flow(sampdat)
 flow <- function(data){
-
+  print("function - flow")
   # This function is used in calculation of FL_Q_F
   calcDistances = function(vector) {
   nreps = length(vector) # number of replicates
