@@ -31,30 +31,38 @@ flow <- function(data){
   }
 
   # Subset the data to the necessary analytes. Otherwise the code breaks when we do the tidyr::spread
+  # Subset the data to the necessary analytes. Otherwise the code breaks when we do the tidyr::spread
   data <- data[which(data$AnalyteName %in% c('Distance from Bank', 'StationWaterDepth', 'Velocity', 'Distance, Float', 'Float Time', 'Wetted Width')),]
   
   # We just knock out all the flow metrics is one go and put in in this variable called FlowMetrics
+  print("We just knock out all the flow metrics is one go and put in in this variable called FlowMetrics")
   FlowMetrics <- data %>% 
     dplyr::group_by(id) %>%
     tidyr::nest() %>%
     dplyr::mutate( 
       FL_Q_F.result = purrr::map(data, function(df){
+        print("FL_Q_F.result")
         # FL_Q_F is only for LocationCode X. Stations that didn't use the Velocity Area method will have zero rows
         # after subsetting it this way
+        print("FL_Q_F is only for LocationCode X")
         df <- df[df$LocationCode == 'X',] %>% dplyr::select(-c(UnitName, VariableResult))
         # If they didn't use velocity area method, return NA
+        print("If they didn't use velocity area method, return NA")
         if (df %>% nrow() == 0) {return(NA)}
         # Dealing with factors
+        print("Dealing with factors")
         df$Result <- as.numeric(as.character(df$Result))
         # Spreading the data makes the calculation easier here
+        print("Spreading the data makes the calculation easier here")
         df <- df %>% tidyr::spread(key = AnalyteName, value = Result)
-        # Have to make sure Replicate is a number. Otherwise it doesn't get ordered correctly when we 
-        # do dplyr::arrange
+        # Have to make sure Replicate is a number. Otherwise it doesn't get ordered correctly when we arrange
+        print("Have to make sure Replicate is a number. Otherwise it doesn't get ordered correctly")
         df$Replicate <- as.numeric(as.character(df$Replicate))
         df <- dplyr::arrange(df, Replicate)
         return(sum(calcDistances(df[['Distance from Bank']]) * df$StationWaterDepth * 0.001076 * df$Velocity))
       }),
       FL_Q_F.count = purrr::map(data, function(df){
+        print("FL_Q_F.count")
         df <- df[df$LocationCode == 'X',] %>% dplyr::select(-c(UnitName, VariableResult))
         if (df %>% nrow() == 0) {return(NA)}
         df$Result <- as.numeric(as.character(df$Result))
@@ -69,6 +77,7 @@ flow <- function(data){
       FL_Q_M.count = FL_Q_F.count,
       FL_N_M.result = purrr::map(data, function(df){
         # This code is for those stations that used the Neutral Buoyant Object Method rather than velocity area
+        print("This code is for those stations that used the Neutral Buoyant Object Method rather than velocity area")
         df <- df %>%
           dplyr::filter(MethodName == 'Neutral Buoyant Object') %>%
           dplyr::mutate(
@@ -79,6 +88,7 @@ flow <- function(data){
         if (df %>% nrow() == 0) {return(NA)}
         
         # I don't know what I should comment here, to be honest. The instructions are somewhat complex
+        print("Calculating areas")
         area_dataframe <- df %>% 
           filter(AnalyteName %in% c('StationWaterDepth','Wetted Width')) %>%
           group_by(transect) %>%
@@ -92,6 +102,7 @@ flow <- function(data){
         
         avg_area <- mean(area_dataframe$areas, na.rm = T)
         
+        print("Calculating velocities")
         velocity_dataframe <- df %>%
           dplyr::filter(AnalyteName %in% c('Float Time','Distance, Float')) %>%
           dplyr::group_by(Replicate) %>% 
@@ -107,16 +118,19 @@ flow <- function(data){
       }),
       FL_N_F.result = as.numeric(as.character(FL_N_M.result)) * 35.32, # Feet to Meters
       XWV_F.result = purrr::map(data, function(df){
+        print("XWV_F.result")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
         return(mean(df$Result, na.rm = T))
       }),
       XWV_F.count = purrr::map(data, function(df){
+        print("XWV_F.count")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
         return(sum(!is.na(df$Result)))
       }),
       XWV_F.sd = purrr::map(data, function(df){
+        print("XWV_F.sd")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
         return(sd(df$Result, na.rm = T))
@@ -124,11 +138,13 @@ flow <- function(data){
       XWV_M.result = as.numeric(as.character(XWV_F.result)) / 3.28, # Feet to Meters
       XWV_M.count = XWV_F.count, # The counts for both metrics will be the same
       XWV_M.sd = purrr::map(data, function(df){
+        print("XWV_M.result")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
         return(sd(df$Result / 3.28, na.rm = T))
       }),
       MWVM_F.result = purrr::map(data, function(df){
+        print("MWVM_F.result")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
         return(max(df$Result, na.rm = T))
@@ -138,6 +154,7 @@ flow <- function(data){
       MWVM_M.result = as.numeric(as.character(MWVM_F.result)) / 3.28,
       MWVM_M.count = XWV_M.count,
       PWVZ.result = purrr::map(data, function(df){
+        print("PWVZ.result")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
         return(sum(df$Result == 0, na.rm = T) * 100 / sum(!is.na(df$Result)))
@@ -149,7 +166,7 @@ flow <- function(data){
     tibble::column_to_rownames('id')
   
   
-  
+  print("round appropriately")
   FlowMetrics$FL_Q_F.result <- FlowMetrics$FL_Q_F.result %>% round(3)
   FlowMetrics$FL_Q_M.result <- FlowMetrics$FL_Q_M.result %>% round(3)
   FlowMetrics$MWVM_F.result <- FlowMetrics$MWVM_F.result %>% round(1)
