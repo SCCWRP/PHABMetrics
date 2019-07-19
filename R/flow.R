@@ -97,7 +97,7 @@ flow <- function(data){
             areas = purrr::map(data, function(subdf){
               mean(as.numeric(as.character(subdf[which(subdf$AnalyteName == 'StationWaterDepth'),]$Result)) / 100) * as.numeric(as.character(subdf[which(subdf$AnalyteName == 'Wetted Width'),]$Result))
             })
-          ) %>% select(-data) %>%
+          ) %>% dplyr::select(-data) %>%
           tidyr::unnest()
         
         avg_area <- mean(area_dataframe$areas, na.rm = T)
@@ -111,7 +111,7 @@ flow <- function(data){
             velocities = purrr::map(data, function(subdf){
               as.numeric(as.character(subdf[which(subdf$AnalyteName == 'Distance, Float'),]$Result)) / as.numeric(as.character(subdf[which(subdf$AnalyteName == 'Float Time'),]$Result))
             })
-          ) %>% select(-data) %>%
+          ) %>% dplyr::select(-data) %>%
           tidyr::unnest()
         avg_velocity <- mean(velocity_dataframe$velocities, na.rm = T)
         return(avg_area * avg_velocity)
@@ -160,7 +160,7 @@ flow <- function(data){
         return(sum(df$Result == 0, na.rm = T) * 100 / sum(!is.na(df$Result)))
       }),
       PWVZ.count = XWV_M.count
-    ) %>% select(-data) %>%
+    ) %>% dplyr::select(-data) %>%
     tidyr::unnest() %>%
     as.data.frame(stringsAsFactors = FALSE) %>%
     tibble::column_to_rownames('id')
