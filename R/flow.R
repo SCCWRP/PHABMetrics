@@ -90,8 +90,8 @@ flow <- function(data){
         # I don't know what I should comment here, to be honest. The instructions are somewhat complex
         print("Calculating areas")
         area_dataframe <- df %>% 
-          filter(AnalyteName %in% c('StationWaterDepth','Wetted Width')) %>%
-          group_by(transect) %>%
+          dplyr::filter(AnalyteName %in% c('StationWaterDepth','Wetted Width')) %>%
+          dplyr::group_by(transect) %>%
           tidyr::nest() %>%
           dplyr::mutate(
             areas = purrr::map(data, function(subdf){
