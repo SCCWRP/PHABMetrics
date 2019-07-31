@@ -43,6 +43,13 @@ phabmetrics <- function(data){
     ~ !any(grepl('[a-z,A-Z]', .x)), as.numeric
     )
   
+  print("out$PCT_DR.sd")
+  print(out$PCT_DR.sd)
+  print("out$PCT_CF.sd")
+  print(out$PCT_CF.sd)
+  print("out$PCT_GL.sd")
+  print(out$PCT_GL.sd)
+  
   return(out)
   
 }

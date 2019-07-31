@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-#### *Marcus W. Beck, marcusb@sccwrp.org, Raphael D. Mazor, raphaelm@sccwrp.org, Mark Engeln*
+#### *Marcus W. Beck, marcusb@sccwrp.org, Robert Butler, r7butler@yahoo.com, Raphael D. Mazor, raphaelm@sccwrp.org, Mark Engeln*
 
 # PHABMetrics
 

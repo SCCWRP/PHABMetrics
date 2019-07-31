@@ -1,10 +1,12 @@
 Package: PHABMetrics
 Type: Package
 Title: Tools For Calculating PHAB Metrics
-Version: 1.0.0
-Date: 2019-01-03
+Version: 2.0.0
+Date: 2019-07-05
 Author: Mark Engeln [aut],
-  Marcus W. Beck [cre]
+  Marcus W. Beck [cre,aut],
+  Robert Butler [aut], 
+  Raphael D. Mazor [ctb]
 Maintainer: Marcus W. Beck <marcusb@sccwrp.org>
 Description: Contains tools for calculating PHAB metrics.
 BugReports: https://github.com/SCCWRP/PHABMetrics/issues
@@ -23,9 +25,17 @@ Authors@R: c(
 	person(given = "Mark", family = "Engeln",
     role = c("aut")),
 	person(given = "Marcus W.", family = "Beck",
-    role = c("cre"),
+    role = c("cre", "aut"),
     email = "marcusb@sccwrp.org"
+    ),
+  person(given = "Robert", family = "Butler",
+    role = c("aut"),
+    email = "r7butler@yahoo.com"
+    ),
+  person(given = "Raphael D.", family = "Mazor",
+    role = c("ctb"),
+    email = "raphaelm@sccwrp.org"
     )
   )
 Encoding: UTF-8
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

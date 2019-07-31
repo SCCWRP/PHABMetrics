@@ -51,9 +51,9 @@ habitat <- function(data){
     analytetotal <- tapply(analyte$convert, analyte$id, lengthna)
     analytetotal <- analytetotal[rownames(result)]
     analytemean <- analytesum/analytetotal
-    analytesd <- tapply(analyte$convert, analyte$id, sd)
+    analytesd <- round(tapply(analyte$convert, analyte$id, sd), 1)
     analytesd <- analytesd[rownames(result)]
-    result[[((i-1)*3)+1]] <- analytemean
+    result[[((i-1)*3)+1]] <- round(analytemean, 1)
     result[[((i-1)*3)+2]] <- analytetotal
     result[[((i-1)*3)+3]] <- analytesd
   }
@@ -61,13 +61,20 @@ habitat <- function(data){
   result$XFC_BIG.result <-  result$XFC_LWD.result + result$XFC_RCK.result + 
     result$XFC_UCB.result + result$XFC_HUM.result
   
+  result$XFC_BIG.count <- rowSums(!is.na(result[,c('XFC_LWD.result','XFC_RCK.result','XFC_UCB.result','XFC_HUM.result')]))
+  
   result$XFC_NAT_EMAP.result <- result$XFC_LWD.result + result$XFC_BRS.result +
     result$XFC_OHV.result + result$XFC_RCK.result + result$XFC_UCB.result
+  
+  result$XFC_NAT_EMAP.count <- rowSums(!is.na(result[,c('XFC_LWD.result','XFC_BRS.result','XFC_OHV.result','XFC_RCK.result','XFC_UCB.result')]))
   
   result$XFC_NAT_SWAMP.result <- result$XFC_LWD.result + result$XFC_BRS.result +
     result$XFC_OHV.result + result$XFC_RCK.result + result$XFC_UCB.result +
     result$XFC_LTR.result + result$XFC_AQM.result
   
+  result$XFC_NAT_SWAMP.count <- rowSums(!is.na(result[,c('XFC_LWD.result','XFC_BRS.result','XFC_OHV.result','XFC_RCK.result','XFC_UCB.result','XFC_LTR.result','XFC_AQM.result')]))
+  
+
   data$present <- ifelse(data$VariableResult %in% c('1', '2', '3', '4'), TRUE, FALSE)
   
   for(i in 1:9){
@@ -79,9 +86,11 @@ habitat <- function(data){
   
   t <- result[,c("XFC_AQM.result", "XFC_HUM.result", "XFC_RCK.result", "XFC_ALG.result", "XFC_LWD.result", "XFC_OHV.result", "XFC_BRS.result", "XFC_UCB.result")]
   result$CFC_ALL_EMAP.result <- rowSums((t>0), na.rm=T)
+  result$CFC_ALL_EMAP.count <- rowSums(!is.na(t))
   
   q <- result[,c("XFC_LTR.result", "XFC_AQM.result", "XFC_HUM.result", "XFC_RCK.result", "XFC_ALG.result", "XFC_LWD.result", "XFC_OHV.result", "XFC_BRS.result", "XFC_UCB.result")]
   result$CFC_ALL_SWAMP.result <- rowSums((q>0), na.rm=T)
+  result$CFC_ALL_SWAMP.count <- rowSums(!is.na(q))
 
   # H_AqHab, Ev_AqHab
   AqHab <- data %>% 
@@ -128,8 +137,12 @@ habitat <- function(data){
         
       }),
       Ev_AqHab.result = purrr::pmap(list(H_AqHab.count, H_AqHab.result), function(H_AqHab.count, H_AqHab.result){
-
-        H_AqHab.result / log(H_AqHab.count)
+        
+        if (H_AqHab.count > 1) {
+          return(H_AqHab.result / log(H_AqHab.count))
+        } else {
+          return(0)
+        }
 
       }),
       Ev_AqHab.count = H_AqHab.count
@@ -140,11 +153,50 @@ habitat <- function(data){
     tibble::column_to_rownames('id')
 
   # add H_AqHab, Ev_AqHab to results
-  result$H_AqHab.result <- AqHab$H_AqHab.result
+  result$H_AqHab.result <- round(AqHab$H_AqHab.result, 2)
   result$H_AqHab.count <- AqHab$H_AqHab.count
-  result$Ev_AqHab.result <- AqHab$Ev_AqHab.result
+  result$Ev_AqHab.result <- round(AqHab$Ev_AqHab.result, 2)
   result$Ev_AqHab.count <- AqHab$Ev_AqHab.count
     
+  counts <- data %>% 
+  dplyr::filter(AnalyteName == 'Fish Cover Macrophytes') %>%
+  dplyr::group_by(id) %>%
+  tidyr::nest() %>%
+  dplyr::mutate(
+    CFC_ALG.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_AQM.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_BRS.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_HUM.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_LTR.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_LWD.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_OHV.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_RCK.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    }),
+    CFC_UCB.count = purrr::map(data, function(df){
+      sum(!is.na(df$VariableResult))
+    })
+  ) %>% dplyr::select(-data) %>%
+  tidyr::unnest() %>%
+  as.data.frame %>%
+  tibble:: column_to_rownames('id')
+
+  result <- merge(result, counts, by='row.names') %>% tibble::column_to_rownames('Row.names')
+  
   return(result)
   
 }
