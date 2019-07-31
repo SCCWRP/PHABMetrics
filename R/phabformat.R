@@ -19,7 +19,7 @@ phabformat <- function(data){
       SampleDate = as.character(SampleDate),
       SampleAgencyCode = as.character(SampleAgencyCode),
       Replicate = as.integer(Replicate),
-      MethodName = as.integer(MethodName),
+      MethodName = as.character(MethodName),
       LocationCode = as.character(LocationCode),
       AnalyteName = as.character(AnalyteName),
       UnitName = as.character(UnitName),
