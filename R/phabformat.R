@@ -16,7 +16,7 @@ phabformat <- function(data){
   data <- data %>% 
     dplyr::mutate(
       StationCode = as.character(StationCode),
-      SampleDate = as.character(SampleDate),
+      SampleDate = as.Date(SampleDate),
       SampleAgencyCode = as.character(SampleAgencyCode),
       Replicate = as.integer(Replicate),
       MethodName = as.character(MethodName),
@@ -27,8 +27,7 @@ phabformat <- function(data){
       FractionName = as.character(FractionName),
       Result = as.numeric(Result),
       ResQualCode = as.character(ResQualCode),
-      QACode = as.character(QACode),
-      id = as.character(id)
+      QACode = as.character(QACode)
       )
   
   data$VariableResult[data$ResQualCode=="NR"] <- "Not Recorded"
