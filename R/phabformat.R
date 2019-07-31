@@ -16,7 +16,7 @@ phabformat <- function(data){
   data <- data %>% 
     dplyr::mutate(
       StationCode = as.character(StationCode),
-      SampleDate = as.Date(SampleDate),
+      SampleDate = as.character(SampleDate),
       SampleAgencyCode = as.character(SampleAgencyCode),
       Replicate = as.integer(Replicate),
       MethodName = as.character(MethodName),
