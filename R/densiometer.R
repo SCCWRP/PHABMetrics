@@ -7,6 +7,7 @@
 #' @export
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' densiometer(sampdat)
 densiometer <- function(data){
 

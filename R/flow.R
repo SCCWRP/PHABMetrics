@@ -7,6 +7,7 @@
 #' @importFrom magrittr "%>%"
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' flow(sampdat)
 flow <- function(data){
   # print("function - flow")

@@ -13,5 +13,6 @@ flow(data)
 Flow metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 flow(sampdat)
 }

@@ -5,6 +5,7 @@
 #' @export
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' channelmorph(sampdat)
 channelmorph <- function(data){
   data <- data[which(data$AnalyteName %in% c('Cascade/Falls', 'Dry', 'Glide', 'Pool', 'Rapid', 'Riffle', 'Run')),]

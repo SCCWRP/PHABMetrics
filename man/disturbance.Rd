@@ -13,5 +13,6 @@ disturbance(data)
 Disturbance metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 disturbance(sampdat)
 }

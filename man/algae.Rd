@@ -13,5 +13,6 @@ algae(data)
 Algae metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 algae(sampdat)
 }

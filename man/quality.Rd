@@ -13,5 +13,6 @@ quality(data)
 Quality metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 quality(sampdat)
 }

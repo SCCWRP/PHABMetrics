@@ -5,6 +5,7 @@
 #' @export
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' ripveg(sampdat)
 ripveg <- function(data){
   data <- data[which(data$AnalyteName %in% c('Riparian GroundCover Barren', 'Riparian GroundCover NonWoody Plants', 'Riparian GroundCover Woody Shrubs', 'Riparian Lower Canopy All Vegetation', 'Riparian Upper Canopy All Trees', 'Riparian Lower Canopy All Vegetation', 'Riparian Upper Canopy All Trees', 'Riparian GroundCover Woody Shrubs', 'Riparian GroundCover NonWoody Plants')),]

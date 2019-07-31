@@ -13,5 +13,6 @@ habitat(data)
 Habitat metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 habitat(sampdat)
 }

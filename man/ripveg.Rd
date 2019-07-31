@@ -13,5 +13,6 @@ ripveg(data)
 Riparian vegetation metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 ripveg(sampdat)
 }

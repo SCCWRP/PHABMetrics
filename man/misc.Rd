@@ -13,5 +13,6 @@ misc(data)
 Miscellaneous metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 misc(sampdat)
 }

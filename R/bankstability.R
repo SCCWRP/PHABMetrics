@@ -5,6 +5,7 @@
 #' @export
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' bankstability(sampdat)
 bankstability <- function(data){
   data <- data[which(data$AnalyteName %in% c('Bank Stability')),]

@@ -13,5 +13,6 @@ channelmorph(data)
 Channel morphology metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 channelmorph(sampdat)
 }

@@ -5,6 +5,7 @@
 #' @export
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' quality(sampdat)
 quality <- function(data){
   data <- data[which(data$AnalyteName %in% c("Alkalinity as CaCO3", "Oxygen, Dissolved",

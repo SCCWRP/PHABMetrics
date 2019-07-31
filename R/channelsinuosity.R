@@ -5,6 +5,7 @@
 #' @export
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' channelsinuosity(sampdat)
 channelsinuosity <- function(data){
 

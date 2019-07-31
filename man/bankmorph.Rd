@@ -13,5 +13,6 @@ bankmorph(data)
 Bank morphology metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 bankmorph(sampdat)
 }

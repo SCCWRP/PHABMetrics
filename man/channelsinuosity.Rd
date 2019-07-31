@@ -13,5 +13,6 @@ channelsinuosity(data)
 Channel sinuosity metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 channelsinuosity(sampdat)
 }

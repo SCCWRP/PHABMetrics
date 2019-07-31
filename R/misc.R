@@ -7,6 +7,7 @@
 #' @export
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' misc(sampdat)
 misc <- function(data){
 

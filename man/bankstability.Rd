@@ -13,5 +13,6 @@ bankstability(data)
 Bank stability metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 bankstability(sampdat)
 }

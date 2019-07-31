@@ -13,5 +13,6 @@ densiometer(data)
 Densiometer metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 densiometer(sampdat)
 }

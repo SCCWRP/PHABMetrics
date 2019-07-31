@@ -7,6 +7,7 @@
 #' @importFrom magrittr "%>%"
 #' 
 #' @examples 
+#' sampdat <- phabformat(sampdat)
 #' bankmorph(sampdat)
 bankmorph <- function(data){
 

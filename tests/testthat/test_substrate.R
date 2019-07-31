@@ -8,6 +8,6 @@ test_that('Checking PCT_RS.result', {
 test_that('Checking PCT_SB.result', {
   
   result <- submet$PCT_SB.result
-  expect_equal(c(7, 1, 0, 20), result)
+  expect_equal(c(2, 0, 13, 7), result)
   
 })

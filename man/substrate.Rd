@@ -13,5 +13,6 @@ substrate(data)
 Substrate metrics
 }
 \examples{
+sampdat <- phabformat(sampdat)
 substrate(sampdat)
 }
