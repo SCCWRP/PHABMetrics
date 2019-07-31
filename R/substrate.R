@@ -89,19 +89,19 @@ substrate <- function(data){
   # Below lines are to add counts to the results dataframe
   # it kind of scares me though, because in this way, I am not sure if the counts will be assigned out of order
   # We will have to test this thoroughly
-  print("creating the PCTs vector")
+  # print("creating the PCTs vector")
   PCTs <- gsub(".result", ".count", colnames(result)[grepl("PCT_", colnames(result))])
   for (name in PCTs){
     result[[name]] <- totals
   }
   
-  print("calculating the BDRK, BIGR, SFGF, SAFN")
+  # print("calculating the BDRK, BIGR, SFGF, SAFN")
   result$PCT_BDRK.result <- result$PCT_RS.result + result$PCT_RR.result
   result$PCT_BIGR.result <- result$PCT_RS.result + result$PCT_RR.result + result$PCT_XB.result + result$PCT_SB.result + result$PCT_CB.result + result$PCT_GC.result
   result$PCT_SFGF.result <- result$PCT_GF.result + result$PCT_SA.result + result$PCT_FN.result
   result$PCT_SAFN.result <- result$PCT_SA.result + result$PCT_FN.result
   
-  print("Getting the counts for those metrics")
+  # print("Getting the counts for those metrics")
   result$PCT_BDRK.count <- rowSums(!is.na(result[,c('PCT_RS.result', 'PCT_RR.result')]))
   result$PCT_BIGR.count <- rowSums(!is.na(result[,c('PCT_RS.result', 'PCT_RR.result', 'PCT_XB.result', 'PCT_SB.result', 'PCT_CB.result', 'PCT_GC.result')]))
   result$PCT_SFGF.count <- rowSums(!is.na(result[,c('PCT_GF.result', 'PCT_SA.result', 'PCT_FN.result')]))
