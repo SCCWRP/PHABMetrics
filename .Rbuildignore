@@ -4,3 +4,4 @@
 ^appveyor\.yml$
 README*
 R/all_phab_functions.r
+^codecov\.yml$

@@ -7,6 +7,8 @@
 Status](https://travis-ci.org/SCCWRP/PHABMetrics.svg?branch=master)](https://travis-ci.org/SCCWRP/PHABMetrics)
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/SCCWRP/PHABMetrics?branch=master&svg=true)](https://ci.appveyor.com/project/SCCWRP/PHABMetrics)
+[![Codecov test
+coverage](https://codecov.io/gh/SCCWRP/PHABMetrics/branch/master/graph/badge.svg)](https://codecov.io/gh/SCCWRP/PHABMetrics?branch=master)
 
 This package provides functions to calculate PHAB metrics using field
 data.
