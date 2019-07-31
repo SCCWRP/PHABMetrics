@@ -16,6 +16,7 @@ Imports:
     magrittr,
     purrr,
     reshape,
+    stringr,
     tibble,
     tidyr
 LazyData: true
