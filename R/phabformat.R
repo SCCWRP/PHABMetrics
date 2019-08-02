@@ -30,8 +30,6 @@ phabformat <- function(data){
       QACode = as.character(QACode)
       )
   
-  data$Result[data$Result == -88] <- NA
-  data$VariableResult[data$VariableResult == ''] <- NA
   data$VariableResult[data$ResQualCode=="NR"] <- "Not Recorded"
   data$Result[data$ResQualCode=="NR"] <- NA
   data <- data %>% 
