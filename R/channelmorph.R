@@ -232,15 +232,15 @@ channelmorph <- function(data){
   # merge on the row names
   results <- merge(results, FlowHab, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
   
-  print('results')
-  print(results)
+  # print('results')
+  # print(results)
   
-  print("results$PCT_CF.sd")
-  print(results$PCT_CF.sd)
-  print("results$PCT_DR.sd")
-  print(results$PCT_DR.sd)
-  print("results$PCT_GL.sd")
-  print(results$PCT_GL.sd)
+  # print("results$PCT_CF.sd")
+  # print(results$PCT_CF.sd)
+  # print("results$PCT_DR.sd")
+  # print(results$PCT_DR.sd)
+  # print("results$PCT_GL.sd")
+  # print(results$PCT_GL.sd)
   
   return(results)
   

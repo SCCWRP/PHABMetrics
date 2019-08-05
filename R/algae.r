@@ -286,8 +286,8 @@ algae <- function(data){
   PCT_MAP.count <- tapply(macroalgae_cover$PCT_MAP, macroalgae_cover$id, function(x){
     return(length(which(x %in% c('Present','Absent'))))
   })
-  print("PCT_MAP.count")
-  print(PCT_MAP.count)
+  # print("PCT_MAP.count")
+  # print(PCT_MAP.count)
   
   ###Compute PCT_NSA###
   
