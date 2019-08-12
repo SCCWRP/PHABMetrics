@@ -91,11 +91,7 @@ bankmorph <- function(data){
   colnames(XWIDTHdata) <- c("id", "result")
   
   XWIDTH_sum <- tapply(XWIDTHdata$result, XWIDTHdata$id, sumna)
-  # The Below line of code which is commented out counts the number of non null observations
-  # This is correct per the instructions. However, it appears that the legacy calculator is including nulls
-  # I will change the code to count null observations and then see if the numbers match
-  #XWIDTH.count <- tapply(XWIDTHdata$result, XWIDTHdata$id, lengthna)
-  XWIDTH.count <- tapply(XWIDTHdata$result, XWIDTHdata$id, length) # This is wrong, but necessary to match legacy. for station 404M07362
+  XWIDTH.count <- tapply(XWIDTHdata$result, XWIDTHdata$id, lengthna)
   XWIDTH.result <- round(XWIDTH_sum/XWIDTH.count, 1)
   
   print("XWIDTHdata")
