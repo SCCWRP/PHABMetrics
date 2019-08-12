@@ -282,10 +282,21 @@ algae <- function(data){
     result <- 100*(present/total)
     return(result)
   }
+
   PCT_MAP.result <- tapply(macroalgae_cover$PCT_MAP, macroalgae_cover$id, PCT_MAP_stats) %>% round
-  PCT_MAP.count <- tapply(macroalgae_cover$PCT_MAP, macroalgae_cover$id, function(x){
-    return(length(which(x %in% c('Present','Absent'))))
-  })
+  
+  # For some reason code wasnt working to get correct counts. Not sure why.
+  #PCT_MAP.count <- tapply(macroalgae_cover$LocationCode, macroalgae_cover$id, function(x){
+    #return(length(which(x %in% c('Present','Absent'))))
+  #})
+  
+  # Code below should fix the counts for PCT_MAP
+  PCT_MAP.count <- data %>% 
+    filter(grepl('Macroalgae Cover, ', AnalyteName),VariableResult %in% c("Present", "Absent")) %>% 
+    group_by(id) %>% 
+    summarize(PCT_MAP.count = length(unique(LocationCode))) %>% 
+    as.data.frame %>% 
+    tibble::column_to_rownames('id')
   print("PCT_MAP.count")
   print(PCT_MAP.count)
   
@@ -335,8 +346,12 @@ algae <- function(data){
   
   algae_results1 <- cbind(PCT_MIATP.result, PCT_MIAT1.result, PCT_MIAT1P.result, PCT_MAA.result, PCT_MCP.result,
                           PCT_MAU.result, PCT_MAP.result, PCT_NSA.result, PCT_MAA.count, PCT_MAU.count, PCT_MCP.count, 
-                          PCT_MAP.count, PCT_NSA.count, PCT_MIAT1.count, PCT_MIAT1P.count, PCT_MIATP.count)
+                          PCT_NSA.count, PCT_MIAT1.count, PCT_MIAT1P.count, PCT_MIATP.count)
   algae_results_final <- cbind(XMIAT, XMIATP, algae_results1)
+  
+  algae_results_final <- merge(algae_results_final, PCT_MAP.count, by = 'row.names') %>% 
+    as.data.frame %>%
+    tibble::column_to_rownames('Row.names')
   
   #results$PCT_MIAT1 <- round(results$PCT_MIAT1)
   #results$PCT_MIAT1P <- round(results$PCT_MIAT1P)
