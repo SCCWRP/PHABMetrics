@@ -57,8 +57,12 @@ bankmorph <- function(data){
   
   ###XWDEPTH###
   
-  XWDEPTHdata <- data.frame(cbind(data$id[which(data$AnalyteName == "StationWaterDepth")], 
-                                  as.numeric(as.character(data$Result[which(data$AnalyteName == "StationWaterDepth")]))))
+  XWDEPTHdata <- data.frame(
+    cbind(data$id[which(data$AnalyteName == "StationWaterDepth")], 
+    as.numeric(as.character(data$Result[which(data$AnalyteName == "StationWaterDepth")])))
+  ) %>%
+    filter(MethodName == 'FieldMeasure')
+                            
   colnames(XWDEPTHdata) <- c("id", "result")
   XWDEPTH_sum <- tapply(XWDEPTHdata$result, XWDEPTHdata$id, sumna)
   XWDEPTH.count <- tapply(XWDEPTHdata$result, XWDEPTHdata$id, lengthna)
