@@ -117,7 +117,7 @@ bankmorph <- function(data){
     data$LocationCode2 <-gsub(ll[i], "", data$LocationCode2)}
   data$Result <- as.numeric(as.character(data$Result))
   XWDM <- data %>% 
-    dplyr::filter(AnalyteName %in% 'StationWaterDepth') %>% 
+    dplyr::filter(AnalyteName == 'StationWaterDepth', MethodName == 'FieldMeasure') %>% 
     dplyr::group_by(id, LocationCode2) %>% 
     dplyr::summarize(Result = max(Result)) %>% 
     dplyr::group_by(id) %>% 
