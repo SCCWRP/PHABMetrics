@@ -17,8 +17,13 @@ bankmorph <- function(data){
   ###Slice Bankfull Height Data ###
   
   heightindex <- which(data$AnalyteName == "Bankfull Height")
-  bankfullheight <- data.frame(cbind(data$id[heightindex], as.character(data$AnalyteName[heightindex]),
-                                     as.character(data$Result[heightindex])))
+  bankfullheight <- data.frame(
+    cbind(
+      data$id[heightindex],
+      as.character(data$AnalyteName[heightindex]),
+      as.character(data$Result[heightindex])
+      )
+    )
   colnames(bankfullheight) <- c("id", "AnalyteName", "result")
   bankfullheight$result <- as.numeric(as.character(bankfullheight$result))
   head(bankfullheight)
@@ -56,12 +61,14 @@ bankmorph <- function(data){
   XBKF_W <- data.frame(cbind(XBKF_W.result, XBKF_W.count, XBKF_W.sd))
   
   ###XWDEPTH###
-  
-  XWDEPTHdata <- data.frame(
-    cbind(data$id[which(data$AnalyteName == "StationWaterDepth")], 
-    as.numeric(as.character(data$Result[which(data$AnalyteName == "StationWaterDepth")])))
-  ) %>%
-    filter(MethodName == 'FieldMeasure')
+  XWDEPTHdata <- data %>% 
+    filter(
+      AnalyteName == 'StationWaterDepth',
+      MethodName == 'FieldMeasure'
+    ) %>%
+    select(
+      id, Result
+    )
                             
   colnames(XWDEPTHdata) <- c("id", "result")
   XWDEPTH_sum <- tapply(XWDEPTHdata$result, XWDEPTHdata$id, sumna)
@@ -71,9 +78,18 @@ bankmorph <- function(data){
   
   ###XWIDTH###
   
-  XWIDTHdata <- data.frame(cbind(data$id[which(data$AnalyteName == "Wetted Width")], 
-                                 as.numeric(as.character(data$Result[which(data$AnalyteName == "Wetted Width")]))))
+  XWIDTHdata <- data %>%
+    filter(
+      AnalyteName == 'Wetted Width',
+      MethodName == 'FieldMeasure'
+    ) %>%
+    select(
+      id, Result
+    )
+  # Just because I don't know how many other times he references the column 'result' with lowercase r in the script
+  # This below line was in the code before
   colnames(XWIDTHdata) <- c("id", "result")
+  
   XWIDTH_sum <- tapply(XWIDTHdata$result, XWIDTHdata$id, sumna)
   # The Below line of code which is commented out counts the number of non null observations
   # This is correct per the instructions. However, it appears that the legacy calculator is including nulls
