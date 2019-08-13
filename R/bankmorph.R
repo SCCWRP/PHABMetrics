@@ -119,7 +119,7 @@ bankmorph <- function(data){
   XWDM <- data %>% 
     dplyr::filter(AnalyteName == 'StationWaterDepth', MethodName == 'FieldMeasure') %>% 
     dplyr::group_by(id, LocationCode2) %>% 
-    dplyr::summarize(Result = max(Result)) %>% 
+    dplyr::summarize(Result = max(Result, na.rm = T)) %>% 
     dplyr::group_by(id) %>% 
     tidyr::nest() %>%
     dplyr::mutate(
