@@ -35,8 +35,8 @@ channelsinuosity <- function(data){
     
   ## XSLOPE calculation --------------------------------------------------------------------------
   XSLOPE <- data_slope %>% 
-    # group_by(id, LocationCode) %>% 
-    # summarize(p_slope = sum(p_slope)) %>% 
+    group_by(id, LocationCode) %>% 
+    summarize(p_slope = sum(p_slope)) %>% 
     group_by(id) %>% 
     summarize(
       XSLOPE.count = sum(na.omit(p_slope) <= 0),
@@ -67,11 +67,34 @@ channelsinuosity <- function(data){
   
   ###XBEARING###
   
-  casted$XBEARING <- casted$Bearing * (casted$Proportion/100)
-  XBEARING_sum <- tapply(casted$XBEARING, casted$id, sumna)
-  XBEARING.count <- tapply(casted$XBEARING, casted$id, lengthna)
-  XBEARING.result <- XBEARING_sum/XBEARING.count
-  XBEARING.sd <- tapply(casted$XBEARING, casted$id, sdna)
+  data_bearing <- data %>%
+    dplyr::group_by(id) %>%
+    arrange(id) %>% 
+    dplyr::mutate(
+      Result = dplyr::case_when(
+        AnalyteName == 'Proportion' ~ Result/100, # convert % to proportion
+        TRUE ~ Result
+      )
+    ) %>% 
+    dplyr::select(-c('MethodName','Replicate','UnitName')) %>% 
+    dplyr::group_by(id, LocationCode, FractionName) %>%
+    tidyr::spread(AnalyteName, Result) %>%
+    dplyr::mutate(
+      Proportion_x_Bearing = `Proportion` * `Bearing`
+    ) %>% 
+    dplyr:: group_by(id, LocationCode) %>%
+    dplyr::summarize(
+      total_proportion = sum(Proportion, na.rm = T),
+      total_bearing = sum(Proportion_x_Bearing, na.rm = T)
+    ) %>%
+    dplyr::group_by(id) %>%
+    dplyr::summarize(
+      XBEARING.result = round(sum(total_bearing, na.rm = T) / sum(total_proportion == 1, na.rm = T) ),
+      XBEARING.count = sum(total_proportion == 1),
+      XBEARING.sd = sd(total_bearing[total_proportion == 1], na.rm = T) %>% round(1)
+    )
+    
+  return(data_bearing)
   
   ###SINU###
   
