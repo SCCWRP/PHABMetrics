@@ -260,10 +260,11 @@ substrate <- function(data){
   result$XSPGM.result <- XSDPGM
   
   # Below is code that does what the original VBA code did. Sorting values and grabbing a value from a certain index
+  # It appears as if SWAMP takes the floor instead of rounding
   PT_ind <- sub %>% dplyr::select(id, value) %>% dplyr::group_by(id) %>% tidyr::nest() %>% 
   dplyr::mutate(perc = purrr::map(data, function(df){
     percentiles <- c('PTD10index','PTD25index','PTD50index','PTD75index','PTD90index')
-    indices <- (sum(!is.na(df$value)) * c(0.1,0.25,0.5,0.75,0.9)) %>% round
+    indices <- (sum(!is.na(df$value)) * c(0.1,0.25,0.5,0.75,0.9)) %>% floor #I thinnk SWAWMP does this rather than rounding
     output <- data.frame(percentiles = percentiles, indices = indices)
     return(output)
   })) %>% 
@@ -272,7 +273,7 @@ substrate <- function(data){
   PP_ind <- sub %>% dplyr::select(id, value2) %>% dplyr::group_by(id) %>% tidyr::nest() %>% 
   dplyr::mutate(perc = purrr::map(data, function(df){
     percentiles <- c('PPD10index','PPD25index','PPD50index','PPD75index','PPD90index')
-    indices <- (sum(!is.na(df$value2)) * c(0.1,0.25,0.5,0.75,0.9)) %>% round
+    indices <- (sum(!is.na(df$value2)) * c(0.1,0.25,0.5,0.75,0.9)) %>% floor #I thinnk SWAWMP does this rather than rounding
     indices <- replace(indices, which(indices == 0), 1)
     output <- data.frame(percentiles = percentiles, indices = indices)
     return(output)

@@ -38,7 +38,7 @@ channelsinuosity <- function(data){
   #  value for XSLOPE.count
   XSLOPE <- data_slope %>% 
     group_by(id, LocationCode) %>% 
-    summarize(p_slope = sum(p_slope)) %>% 
+    summarize(p_slope = sum(p_slope, na.rm = T)) %>% 
     group_by(id) %>% 
     summarize(
       XSLOPE.count = sum(!is.na(p_slope)),
