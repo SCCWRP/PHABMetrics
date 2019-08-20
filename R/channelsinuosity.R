@@ -93,7 +93,6 @@ channelsinuosity <- function(data){
       total_proportion = sum(Proportion, na.rm = T),
       total_bearing = sum(Proportion_x_Bearing, na.rm = T)
     ) %>%
-    dplyr::group_by(id) %>%
     dplyr::summarize(
       XBEARING.result = round(sum(total_bearing, na.rm = T) / sum(total_proportion == 1, na.rm = T) ),
       XBEARING.count = sum(total_proportion == 1),
