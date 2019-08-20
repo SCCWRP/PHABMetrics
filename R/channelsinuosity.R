@@ -94,8 +94,6 @@ channelsinuosity <- function(data){
       XBEARING.sd = sd(total_bearing[total_proportion == 1], na.rm = T) %>% round(1)
     )
     
-  return(data_bearing)
-  
   ###SINU###
   
   cos1 <- function(i, Segment, Bearing){(Segment[i] * cos((Bearing[i]/360)*2*pi))}
