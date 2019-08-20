@@ -34,15 +34,16 @@ channelsinuosity <- function(data){
     )
     
   ## XSLOPE calculation --------------------------------------------------------------------------
+  # We believe that SWAMP was mistakenly counting fractions as if they were unique locations, thus throwing off the 
+  #  value for XSLOPE.count
   XSLOPE <- data_slope %>% 
     group_by(id, LocationCode) %>% 
     summarize(p_slope = sum(p_slope)) %>% 
     group_by(id) %>% 
     summarize(
-      XSLOPE.count = sum(na.omit(p_slope) <= 0),
-      XSLOPE.result = mean(p_slope, na.rm = T),
-      XSLOPE.sd = sd(p_slope, na.rm = T),
-      SLOPE_0.count = length(na.omit(p_slope) <= 0)
+      XSLOPE.count = sum(!is.na(p_slope)),
+      XSLOPE.result = round(mean(p_slope, na.rm = T), 1),
+      XSLOPE.sd = round(sd(p_slope, na.rm = T), 2)
     )
     
   ## SLOPE_pcnt calculation -------------------------------------------------------------------------
@@ -55,17 +56,17 @@ channelsinuosity <- function(data){
       slope_2   = p_slope <= 2
     ) %>% 
     summarize(
-      SLOPE_0.count = sum(slope_0),
-      SLOPE_0_5.count = sum(slope_0_5),
-      SLOPE_1.count = sum(slope_1),
-      SLOPE_2.count = sum(slope_2),
+      SLOPE_0.count = sum(!is.na(slope_0)),
+      SLOPE_0_5.count = sum(!is.na(slope_0_5)),
+      SLOPE_1.count = sum(!is.na(slope_1)),
+      SLOPE_2.count = sum(!is.na(slope_2)),
       SLOPE_0.result = sum(`Length, Segment`[slope_0])/sum(`Length, Segment`) * 100,
       SLOPE_0_5.result = sum(`Length, Segment`[slope_0_5])/sum(`Length, Segment`) * 100,
       SLOPE_1.result = sum(`Length, Segment`[slope_1])/sum(`Length, Segment`) * 100,
       SLOPE_2.result = sum(`Length, Segment`[slope_2])/sum(`Length, Segment`) * 100
     )
   
-  ###XBEARING###
+  ###XBEARING AND SINU###
   
   data_bearing <- data %>%
     dplyr::group_by(id) %>%
@@ -81,7 +82,12 @@ channelsinuosity <- function(data){
     tidyr::spread(AnalyteName, Result) %>%
     dplyr::mutate(
       Proportion_x_Bearing = `Proportion` * `Bearing`
-    ) %>% 
+    ) 
+    
+    
+  ### XBEARING ###
+  # Sum of total proportions for all Fractions at one location should add to one, otherwise, that location is excluded from the count
+  XBEARING <- data_bearing %>%
     dplyr:: group_by(id, LocationCode) %>%
     dplyr::summarize(
       total_proportion = sum(Proportion, na.rm = T),
@@ -96,13 +102,25 @@ channelsinuosity <- function(data){
     
   ###SINU###
   
+  SINU <- data_bearing %>%
+    dplyr::group_by(id) %>%
+    dplyr::mutate(
+      bearing_radians = Bearing * pi / 180,
+      cos_bearing = cos(bearing_radians),
+      sin_bearing = sin(bearing_radians)
+    ) %>% 
+    dplyr::summarize(
+      SINU.count = sum((!is.na(`Length, Segment`)) & (!is.na(Bearing)) ),
+      SINU.result = sum(`Length, Segment`) / sqrt((sum(`Length, Segment` * cos_bearing)^2) + (sum(`Length, Segment` * sin_bearing)^2)),
+      SINU.result = round(SINU.result, 2)
+    )
   
-  
-  ###Write to file###
-  
-  result <- cbind(XSLOPE.result, XSLOPE.count, XSLOPE.sd, SLOPE_0.result, SLOPE_0.count, SLOPE_0_5.result,
-                  SLOPE_0_5.count, SLOPE_1.result, SLOPE_1.count, SLOPE_2.result, SLOPE_2.count, XBEARING.result, XBEARING.count, XBEARING.sd, SINU.NOT_WORKING)
 
-  return(result)
+  # Return final result #
+  result <- dplyr::inner_join(XSLOPE, SLOPE_pcnt, by = 'id') %>% 
+    dplyr::inner_join(XBEARING, by = 'id') %>%
+    dplyr::inner_join(SINU, by = 'id') %>%
+    tibble::column_to_rownames('id')
   
+  return(result)
 }
