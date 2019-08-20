@@ -170,6 +170,8 @@ flow <- function(data){
   # print("round appropriately")
   FlowMetrics$FL_Q_F.result <- FlowMetrics$FL_Q_F.result %>% round(3)
   FlowMetrics$FL_Q_M.result <- FlowMetrics$FL_Q_M.result %>% round(3)
+  FlowMetrics$FL_N_F.result <- FlowMetrics$FL_N_F.result %>% round(3)
+  FlowMetrics$FL_N_M.result <- FlowMetrics$FL_N_M.result %>% round(3)
   FlowMetrics$MWVM_F.result <- FlowMetrics$MWVM_F.result %>% round(1)
   FlowMetrics$MWVM_M.result <- FlowMetrics$MWVM_M.result %>% round(1)
   FlowMetrics$XWV_M.result <- FlowMetrics$XWV_M.result %>% round(2)
