@@ -96,19 +96,7 @@ channelsinuosity <- function(data){
     
   ###SINU###
   
-  cos1 <- function(i, Segment, Bearing){(Segment[i] * cos((Bearing[i]/360)*2*pi))}
-  sin1 <- function(i, Segment, Bearing){(Segment[i] * sin((Bearing[i]/360)*2*pi))}
   
-  #cast(data, id + FractionName ~ AnalyteName, value = "Result", fun.aggregate=mean)
-  casted$cos <- unlist(lapply(1:length(casted$Segment), Segment=casted$Segment, FUN=cos1, Bearing = casted$Bearing))
-  casted$sin <- unlist(lapply(1:length(casted$Segment), Segment=casted$Segment, FUN=sin1, Bearing = casted$Bearing))
-  
-  
-  distance <- tapply(casted$Segment, casted$id, sumna)
-  sin2 <- tapply(casted$sin, casted$id, sumna)
-  cos2 <- tapply(casted$cos, casted$id, sumna)
-  casted$ttt <- unlist(lapply(1:length(casted$id), function(i, si, co) 2*si[i], si=casted$sin, co=casted$cos))
-  SINU.NOT_WORKING <- distance/(tapply(casted$ttt, casted$id, sumna))
   
   ###Write to file###
   
