@@ -111,7 +111,7 @@ channelsinuosity <- function(data){
     ) %>% 
     dplyr::summarize(
       SINU.count = sum((!is.na(`Length, Segment`)) & (!is.na(Bearing)) ),
-      SINU.result = sum(`Length, Segment`) / sqrt((sum(`Length, Segment` * cos_bearing)^2) + (sum(`Length, Segment` * sin_bearing)^2)),
+      SINU.result = sum(`Length, Segment`, na.rm = T) / sqrt((sum(`Length, Segment` * cos_bearing, na.rm = T)^2) + (sum(`Length, Segment` * sin_bearing, na.rm = T)^2)),
       SINU.result = round(SINU.result, 2)
     )
   
