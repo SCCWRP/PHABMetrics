@@ -134,7 +134,7 @@ flow <- function(data){
         # print("XWV_F.sd")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
-        return(sd(df$Result, na.rm = T))
+        return(round(sd(df$Result, na.rm = T), 3))
       }),
       XWV_M.result = as.numeric(as.character(XWV_F.result)) / 3.28, # Feet to Meters
       XWV_M.count = XWV_F.count, # The counts for both metrics will be the same
@@ -142,7 +142,7 @@ flow <- function(data){
         # print("XWV_M.result")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
-        return(sd(df$Result / 3.28, na.rm = T))
+        return(round(sd(df$Result / 3.28, na.rm = T), 3))
       }),
       MWVM_F.result = purrr::map(data, function(df){
         # print("MWVM_F.result")
