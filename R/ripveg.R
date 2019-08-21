@@ -307,11 +307,11 @@ ripveg <- function(data){
       XPMGVEG.result = purrr::map(data, function(subdf){
         #subdf$GroundCoverPresence <- (as.numeric(as.character(subdf[['Riparian GroundCover NonWoody Plants']])) > 0 & as.numeric(as.character(subdf[['Riparian GroundCover Woody Shrubs']]))) > 0
         subdf$GroundCoverPresence <- ( (as.numeric(as.character(subdf[['Riparian GroundCover NonWoody Plants']])) > 1 ) | (as.numeric(as.character(subdf[['Riparian GroundCover Woody Shrubs']])) > 1) )
-        print(subdf)
+        # print(subdf)
         non_null_obs <- sum(!is.na(subdf$GroundCoverPresence))
-        print(non_null_obs)
+        # print(non_null_obs)
         obs_above_one <- sum(subdf$GroundCoverPresence, na.rm = T)
-        print(obs_above_one)
+        # print(obs_above_one)
         return(round(obs_above_one / non_null_obs, 2))
       }),
       XPCM.count = purrr::map(data, function(subdf){

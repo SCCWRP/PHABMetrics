@@ -144,9 +144,9 @@ disturbance <- function(data){
 
   for (i in 1:length(statname)){
     metric <- as.character(statname[i])
-    print(metric)
+    # print(metric)
     tmp <- reformed[which(grepl(metric,reformed$Metric)),]
-    print(tmp)
+    # print(tmp)
     rownames(result) <- tmp$id
     result[,paste(metric,'.result', sep='')] <- round(tmp$Result, 2)
     result[,paste(metric,'.count', sep='')] <- tmp$Count

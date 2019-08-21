@@ -16,7 +16,8 @@ algae <- function(data){
   }
   
   ###Slice for microalgae###
-  microalgae <- data.frame(cbind(data$id[which(data$AnalyteName == 'Microalgae Thickness')], as.character(data$VariableResult[which(data$AnalyteName == 'Microalgae Thickness')])))
+  microalgae <- data.frame(cbind(data$id[which(data$AnalyteName == 'Microalgae Thickness')], 
+                                 as.character(data$VariableResult[which(data$AnalyteName == 'Microalgae Thickness')])))
   colnames(microalgae) <- c("id", "VariableResult")
   
   ###Compute PCT_MIATP###
@@ -264,85 +265,94 @@ algae <- function(data){
   })
   
   ###Compute PCT_MAP###
+ 
+  # Code below should fix the counts for PCT_MAP
+  PCT_MAP.count <- data %>% 
+    dplyr::filter(
+      grepl('Macroalgae Cover, ', AnalyteName),
+      VariableResult %in% c("Present", "Absent")
+   ) %>% 
+    dplyr::group_by(id) %>% 
+    dplyr::summarize(
+      PCT_MAP.count = length(unique(LocationCode))
+    ) %>% 
+    as.data.frame %>% 
+    tibble::column_to_rownames('id')
+  
+  PCT_MAP <- data %>%
+    dplyr::filter(
+      grepl('Macroalgae Cover, ', AnalyteName),
+      VariableResult %in% c("Present", "Absent")
+    ) %>% 
+    dplyr::group_by(id) %>% 
+    tidyr::nest() %>%
+    dplyr::mutate(
+      PCT_MAP.count = purrr::map(data, function(df){
+        return(length(unique(df$LocationCode)))
+      }),
+      PCT_MAP.result = purrr::map(data, function(df){
+        number_present <- df[df$VariableResult == 'Present',]$LocationCode %>% unique %>% length
+        return(round( (100 * number_present) / length(unique(df$LocationCode))))
+      })
+    ) %>% 
+    dplyr::select(-data) %>%
+    tidyr::unnest() %>%
+    as.data.frame %>%
+    tibble::column_to_rownames('id')
+    
 
-  colnames(macroalgae_cover_unattached)<- c("id", "VariableResult2")
-  macroalgae_cover <- cbind(macroalgae_cover_unattached, macroalgae_cover_attached$VariableResult)
-  colnames(macroalgae_cover) <- c("id", "unattached", "attached")
-  
-  macroalgae_cover$PCT_MAP <- 1:length(macrophyte_cover$id)
-  for(i in 1:length(macrophyte_cover$id)){
-    if(((macroalgae_cover$unattached[i] == "Present")|(macroalgae_cover$attached[i] == "Present"))){macroalgae_cover$PCT_MAP[i] <- "Present"} else
-      if (((macroalgae_cover$unattached[i] == "Absent")&(macroalgae_cover$attached[i] == "Absent"))) {macroalgae_cover$PCT_MAP[i] <- "Absent"
-      }
-  }
-  
-  PCT_MAP_stats <- function(data){
-    present <- length(which(data=="Present"))
-    total <- length(which(data=="Absent"))+present
-    result <- 100*(present/total)
-    return(result)
-  }
-  PCT_MAP.result <- tapply(macroalgae_cover$PCT_MAP, macroalgae_cover$id, PCT_MAP_stats) %>% round
-  PCT_MAP.count <- tapply(macroalgae_cover$PCT_MAP, macroalgae_cover$id, function(x){
-    return(length(which(x %in% c('Present','Absent'))))
-  })
-  print("PCT_MAP.count")
-  print(PCT_MAP.count)
-  
   ###Compute PCT_NSA###
   
-  macroalgae_cover$PCT_NSA_characters <- as.character(microalgae$VariableResult)
   
-  for(i in 1:length(microalgae$VariableResult)){
-    if(microalgae$VariableResult[i] == "3"){macroalgae_cover$PCT_NSA_characters[i] <- "Present"} else
-      if(microalgae$VariableResult[i] == "4"){macroalgae_cover$PCT_NSA_characters[i] <- "Present"} else
-        if(microalgae$VariableResult[i] == "5"){macroalgae_cover$PCT_NSA_characters[i] <- "Present"} else
-          if(microalgae$VariableResult[i] == "0"){macroalgae_cover$PCT_NSA_characters[i] <- "Absent"} else
-            if(microalgae$VariableResult[i] == "1"){macroalgae_cover$PCT_NSA_characters[i] <- "Absent"} else
-              if(microalgae$VariableResult[i] == "2"){macroalgae_cover$PCT_NSA_characters[i] <- "Absent"} 
-  }
-  macroalgae_cover$PCT_NSA <- 1:length(macrophyte_cover$id)
-  for(i in 1:length(macrophyte_cover$id)){
-    if(((macroalgae_cover$PCT_MAP[i] == "Present")|(macroalgae_cover$PCT_NSA_characters[i] == "Present"))){macroalgae_cover$PCT_NSA[i] <- "Present"} else
-      if (((macroalgae_cover$PCT_MAP[i] == "Absent")&(macroalgae_cover$PCT_NSA_characters[i] == "Absent"))) {macroalgae_cover$PCT_NSA[i] <- "Absent"
-      }
-  }
-  PCT_NSA_sum <- function(data){
-    result <- length(which(data=="Present"))
-    return(result)}
-  
-  macroalgae_cover$PCT_NSA_total <- 1:length(macroalgae_cover$id)
-  for(i in 1:length(macroalgae_cover$id)){
-    if(macroalgae_cover$unattached[i] == "Dry"){macroalgae_cover$PCT_NSA_total[i] <- "blank"} else{
-      if(macroalgae_cover$unattached[i] == "Not Recorded"){macroalgae_cover$PCT_NSA_total[i] <- "blank"} else{
-        if(macroalgae_cover$attached[i] == "Not Recorded"){macroalgae_cover$PCT_NSA_total[i] <- "blank"} else{
-          if(macroalgae_cover$attached[i] == "Dry"){macroalgae_cover$PCT_NSA_total[i] <- "blank"} else{
-            if(macroalgae_cover$PCT_NSA_characters[i] == "Dry"){macroalgae_cover$PCT_NSA_total[i] <- "blank"} else{		
-              if(macroalgae_cover$PCT_NSA_characters[i] == "Not Recorded"){macroalgae_cover$PCT_NSA_total[i] <- "blank"}}}}}}}
-  
-  PCT_NSA_total <- function(data){
-    result <- length(which(data != "blank"))
-    return(result)}
-  
-  PCT_NSA_sums <- tapply(macroalgae_cover$PCT_NSA, macroalgae_cover[[1]], PCT_NSA_sum)
-  PCT_NSA_totals <- tapply(macroalgae_cover$PCT_NSA_total, macroalgae_cover[[1]], PCT_NSA_total)
-  PCT_NSA.result <- round((PCT_NSA_sums/PCT_NSA_totals)*100)
-  PCT_NSA.count <- PCT_NSA_totals
-  
+  PCT_NSA <- data %>%
+    dplyr::filter(AnalyteName %in% c('Microalgae Thickness','Macroalgae Cover, Unattached','Macroalgae Cover, Attached')) %>%
+    dplyr::group_by(id) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      PCT_NSA.count = purrr::map(data, function(df){
+        df <- df %>% 
+          group_by(LocationCode) %>%
+          dplyr::summarize(
+            total_count = case_when(
+              length(intersect(VariableResult, c('Present', 'Absent','0','1','2','3','4','5'))) > 0 ~ T,
+              TRUE ~ F
+            )
+          )
+        return(sum(df$total_count))
+      }),
+      PCT_NSA.present = purrr::map(data, function(df){
+        df <- df %>%
+          dplyr::filter(
+            VariableResult %in% c('Present','3','4','5')
+          )
+        return(df$LocationCode %>% unique %>% length)
+      })
+    ) %>% 
+    dplyr::select(-data) %>%
+    tidyr::unnest() %>%
+    dplyr::mutate(
+      PCT_NSA.result = (100 * PCT_NSA.present / PCT_NSA.count) %>% round
+    ) %>% 
+    select(-PCT_NSA.present) %>%
+    as.data.frame %>%
+    tibble::column_to_rownames('id')
   
   
   ###Write the results to file###
   
   algae_results1 <- cbind(PCT_MIATP.result, PCT_MIAT1.result, PCT_MIAT1P.result, PCT_MAA.result, PCT_MCP.result,
-                          PCT_MAU.result, PCT_MAP.result, PCT_NSA.result, PCT_MAA.count, PCT_MAU.count, PCT_MCP.count, 
-                          PCT_MAP.count, PCT_NSA.count, PCT_MIAT1.count, PCT_MIAT1P.count, PCT_MIATP.count)
+                          PCT_MAU.result, PCT_MAA.count, PCT_MAU.count, PCT_MCP.count, 
+                          PCT_MIAT1.count, PCT_MIAT1P.count, PCT_MIATP.count)
   algae_results_final <- cbind(XMIAT, XMIATP, algae_results1)
   
-  #results$PCT_MIAT1 <- round(results$PCT_MIAT1)
-  #results$PCT_MIAT1P <- round(results$PCT_MIAT1P)
-  #results$XMIAT <- round(results$XMIAT, 1)
-  #results$XMIATP <- round(results$XMIATP, 1)
-  
+  algae_results_final <- merge(algae_results_final, PCT_MAP, by = 'row.names') %>%
+    as.data.frame %>%
+    tibble::column_to_rownames('Row.names') %>%
+    merge(PCT_NSA, by = 'row.names') %>%
+    as.data.frame %>%
+    tibble::column_to_rownames('Row.names')
+
+  print(PCT_NSA)
     
   return(algae_results_final)
 }
