@@ -66,8 +66,11 @@ channelsinuosity <- function(data){
       SLOPE_2.result = sum(`Length, Segment`[slope_2])/sum(`Length, Segment`) * 100
     )
   
-  ###XBEARING AND SINU###
   
+
+
+  # XBEARING AND SINU -------------------------------------------------------
+
   data_bearing <- data %>%
     dplyr::group_by(id) %>%
     arrange(id) %>% 
@@ -99,8 +102,8 @@ channelsinuosity <- function(data){
       XBEARING.sd = sd(total_bearing[total_proportion == 1], na.rm = T) %>% round(1)
     )
     
-  ###SINU###
   
+  ###SINU###
   SINU <- data_bearing %>%
     dplyr::group_by(id) %>%
     dplyr::mutate(
