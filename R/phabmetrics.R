@@ -13,40 +13,11 @@
 phabmetrics <- function(data){
   
   # format input
-  print("Here is the data that was inputted")
-  print(head(data))
   data <- phabformat(data)
-  print("Done formatting Raw Data")
-  print(head(data))
+  
+  # chkinp threw off values of sinuosity metrics by removing rows of data
+  # We should probably let the checker application check the data so users (and us) are aware of any problems with their data
   data <- chkinp(data, purge = TRUE)
-  print("chkinp function is done")
-  print(head(data))
-  print("Bankmorph")
-  print(head(bankmorph(data)))
-  print("Channelmorph")
-  print(head(channelmorph(data)))
-  print("Channel Sinuosity")
-  print(head(channelsinuosity(data)))
-  print("Densiometer")
-  print(head(densiometer(data)))
-  print("Habitat")
-  print(head(habitat(data)))
-  print("Disturbance")
-  print(head(disturbance(data)))
-  print("Flow")
-  print(head(flow(data)))
-  print("Misc")
-  print(head(misc(data)))
-  print("Bankstability")
-  print(head(bankstability(data)))
-  print("Quality")
-  print(head(quality(data)))
-  print("Ripveg")
-  print(head(ripveg(data)))
-  print("Substrate")
-  print(head(substrate(data)))
-  print("Algae")
-  print(head(algae(data)))
   
   # calc metrics
   metrics <- list(bankmorph(data), channelmorph(data), channelsinuosity(data),
