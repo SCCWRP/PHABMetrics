@@ -17,8 +17,13 @@ bankmorph <- function(data){
   ###Slice Bankfull Height Data ###
   
   heightindex <- which(data$AnalyteName == "Bankfull Height")
-  bankfullheight <- data.frame(cbind(data$id[heightindex], as.character(data$AnalyteName[heightindex]),
-                                     as.character(data$Result[heightindex])))
+  bankfullheight <- data.frame(
+    cbind(
+      data$id[heightindex],
+      as.character(data$AnalyteName[heightindex]),
+      as.character(data$Result[heightindex])
+      )
+    )
   colnames(bankfullheight) <- c("id", "AnalyteName", "result")
   bankfullheight$result <- as.numeric(as.character(bankfullheight$result))
   head(bankfullheight)
@@ -32,7 +37,7 @@ bankmorph <- function(data){
     sum(!is.na(data))
   }
   XBKF_H.count <- tapply(bankfullheight$result, bankfullheight$id, lengthna)
-  XBKF_H.result <- round(XBKF_sum/XBKF_H.count,2)
+  XBKF_H.result <- round(XBKF_sum/XBKF_H.count,1)
   sdna <- function(data){
     sd(data, na.rm = T)
   }
@@ -56,9 +61,15 @@ bankmorph <- function(data){
   XBKF_W <- data.frame(cbind(XBKF_W.result, XBKF_W.count, XBKF_W.sd))
   
   ###XWDEPTH###
-  
-  XWDEPTHdata <- data.frame(cbind(data$id[which(data$AnalyteName == "StationWaterDepth")], 
-                                  as.numeric(as.character(data$Result[which(data$AnalyteName == "StationWaterDepth")]))))
+  XWDEPTHdata <- data %>% 
+    filter(
+      AnalyteName == 'StationWaterDepth',
+      MethodName == 'FieldMeasure'
+    ) %>%
+    select(
+      id, Result
+    )
+                            
   colnames(XWDEPTHdata) <- c("id", "result")
   XWDEPTH_sum <- tapply(XWDEPTHdata$result, XWDEPTHdata$id, sumna)
   XWDEPTH.count <- tapply(XWDEPTHdata$result, XWDEPTHdata$id, lengthna)
@@ -67,22 +78,27 @@ bankmorph <- function(data){
   
   ###XWIDTH###
   
-  XWIDTHdata <- data.frame(cbind(data$id[which(data$AnalyteName == "Wetted Width")], 
-                                 as.numeric(as.character(data$Result[which(data$AnalyteName == "Wetted Width")]))))
+  XWIDTHdata <- data %>%
+    filter(
+      AnalyteName == 'Wetted Width',
+      MethodName == 'FieldMeasure'
+    ) %>%
+    select(
+      id, Result
+    )
+  # Just because I don't know how many other times he references the column 'result' with lowercase r in the script
+  # This below line was in the code before
   colnames(XWIDTHdata) <- c("id", "result")
+  
   XWIDTH_sum <- tapply(XWIDTHdata$result, XWIDTHdata$id, sumna)
-  # The Below line of code which is commented out counts the number of non null observations
-  # This is correct per the instructions. However, it appears that the legacy calculator is including nulls
-  # I will change the code to count null observations and then see if the numbers match
-  #XWIDTH.count <- tapply(XWIDTHdata$result, XWIDTHdata$id, lengthna)
-  XWIDTH.count <- tapply(XWIDTHdata$result, XWIDTHdata$id, length) # This is wrong, but necessary to match legacy. for station 404M07362
+  XWIDTH.count <- tapply(XWIDTHdata$result, XWIDTHdata$id, lengthna)
   XWIDTH.result <- round(XWIDTH_sum/XWIDTH.count, 1)
   
-  print("XWIDTHdata")
-  print(XWIDTHdata %>% dplyr::filter(grepl('404M07362',id)))
+  # print("XWIDTHdata")
+  # print(XWIDTHdata %>% dplyr::filter(grepl('404M07362',id)))
   XWIDTH.sd <- tapply(as.numeric(as.character(XWIDTHdata$result)), XWIDTHdata$id, sdna) %>% round(2)
-  print("XWIDTH.sd")
-  print(XWIDTH.sd)
+  # print("XWIDTH.sd")
+  # print(XWIDTH.sd)
   ###XWDR###
   
   XWDR.result <- (XWIDTH.result/XWDEPTH.result)*100
@@ -101,9 +117,9 @@ bankmorph <- function(data){
     data$LocationCode2 <-gsub(ll[i], "", data$LocationCode2)}
   data$Result <- as.numeric(as.character(data$Result))
   XWDM <- data %>% 
-    dplyr::filter(AnalyteName %in% 'StationWaterDepth') %>% 
+    dplyr::filter(AnalyteName == 'StationWaterDepth', MethodName == 'FieldMeasure') %>% 
     dplyr::group_by(id, LocationCode2) %>% 
-    dplyr::summarize(Result = max(Result)) %>% 
+    dplyr::summarize(Result = max(Result, na.rm = T)) %>% 
     dplyr::group_by(id) %>% 
     tidyr::nest() %>%
     dplyr::mutate(
