@@ -352,7 +352,6 @@ algae <- function(data){
     as.data.frame %>%
     tibble::column_to_rownames('Row.names')
 
-  print(PCT_NSA)
-    
+
   return(algae_results_final)
 }
