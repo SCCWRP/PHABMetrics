@@ -173,7 +173,7 @@ habitat <- function(data){
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_BRS.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Woody Debris <0.3m')
+      df <- df %>% filter(AnalyteName == 'Fish Cover Woody Debris <0.3 m')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_HUM.count = purrr::map(data, function(df){
@@ -185,7 +185,7 @@ habitat <- function(data){
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_LWD.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Woody Debris >0.3m')
+      df <- df %>% filter(AnalyteName == 'Fish Cover Woody Debris >0.3 m')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_OHV.count = purrr::map(data, function(df){
