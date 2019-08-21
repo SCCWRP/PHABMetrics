@@ -13,8 +13,40 @@
 phabmetrics <- function(data){
   
   # format input
+  print("Here is the data that was inputted")
+  print(head(data))
   data <- phabformat(data)
+  print("Done formatting Raw Data")
+  print(head(data))
   data <- chkinp(data, purge = TRUE)
+  print("chkinp function is done")
+  print(head(data))
+  print("Bankmorph")
+  print(head(bankmorph(data)))
+  print("Channelmorph")
+  print(head(channelmorph(data)))
+  print("Channel Sinuosity")
+  print(head(channelsinuosity(data)))
+  print("Densiometer")
+  print(head(densiometer(data)))
+  print("Habitat")
+  print(head(habitat(data)))
+  print("Disturbance")
+  print(head(disturbance(data)))
+  print("Flow")
+  print(head(flow(data)))
+  print("Misc")
+  print(head(misc(data)))
+  print("Bankstability")
+  print(head(bankstability(data)))
+  print("Quality")
+  print(head(quality(data)))
+  print("Ripveg")
+  print(head(ripveg(data)))
+  print("Substrate")
+  print(head(substrate(data)))
+  print("Algae")
+  print(head(algae(data)))
   
   # calc metrics
   metrics <- list(bankmorph(data), channelmorph(data), channelsinuosity(data),
@@ -42,6 +74,9 @@ phabmetrics <- function(data){
   dplyr::mutate_if(
     ~ !any(grepl('[a-z,A-Z]', .x)), as.numeric
     )
+  
+  print("out")
+  print(out %>% head())
   
   #print("out$PCT_DR.sd")
   #print(out$PCT_DR.sd)
