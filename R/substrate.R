@@ -292,31 +292,31 @@ substrate <- function(data){
         median(df$value, na.rm = T)
       }),
       SB_PT_D10.result = purrr::map(data, function(df){
-        sort(df$value)[df$PTD10index[1] + 1]
+        sort(df$value)[df$PTD10index[1]]
       }),
       SB_PT_D25.result = purrr::map(data, function(df){
-        sort(df$value)[df$PTD25index[1] + 1]
+        sort(df$value)[df$PTD25index[1]]
       }),
       SB_PT_D75.result = purrr::map(data, function(df){
-        sort(df$value)[df$PTD75index[1] + 1]
+        sort(df$value)[df$PTD75index[1]]
       }),
       SB_PT_D90.result = purrr::map(data, function(df){
-        sort(df$value)[df$PTD90index[1] + 1]
+        sort(df$value)[df$PTD90index[1]]
       }),
       SB_PP_D50.result = purrr::map(data, function(df){
-        sort(df$value)[df$PPD50index[1] + 1]
+        sort(df$value)[df$PPD50index[1]]
       }),
       SB_PP_D10.result = purrr::map(data, function(df){
-        sort(df$value)[df$PPD10index[1] + 1]
+        sort(df$value)[df$PPD10index[1]]
       }),
       SB_PP_D25.result = purrr::map(data, function(df){
-        sort(df$value)[df$PPD25index[1] + 1]
+        sort(df$value)[df$PPD25index[1]]
       }),
       SB_PP_D75.result = purrr::map(data, function(df){
-        sort(df$value)[df$PPD75index[1] + 1]
+        sort(df$value)[df$PPD75index[1]]
       }),
       SB_PP_D90.result = purrr::map(data, function(df){
-        sort(df$value)[df$PPD90index[1] + 1]
+        sort(df$value)[df$PPD90index[1]]
       }),
       SB_PT_D50.count = purrr::map(data, function(df){
         sum(!is.na(df$value))
