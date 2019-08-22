@@ -174,7 +174,7 @@ ripveg <- function(data){
     sum(!is.na(data))
   }
   XC.count <- tapply(uppercanopy$result, uppercanopy$id, lengthna)
-  XC.result <- round(XC_sum/XC.count, 2)
+  XC.result <- round(XC_sum/XC.count)
   sdna <- function(data){
     sd(data, na.rm = T)
   }
