@@ -237,32 +237,54 @@ ripveg <- function(data){
   XPCAN.count <- XPCAN_total
 
   ###Compute XPGVEG###
-  woodyindex <- which(data$AnalyteName == "Riparian GroundCover Woody Shrubs")
-  woody <- data.frame(cbind(data$id[woodyindex], as.character(data$AnalyteName[woodyindex]),
-                            as.character(data$VariableResult[woodyindex])))
-  colnames(woody) <- c("id", "AnalyteName", "result")
-  woody$result[woody$result %in% 'Not Recorded'] <- NA 
-  woody$result <- as.numeric(as.character(woody$result))
-  head(woody)
-  nonwoodyindex <- which(data$AnalyteName == "Riparian GroundCover NonWoody Plants")
-  nonwoody <- data.frame(cbind(data$id[nonwoodyindex], as.character(data$AnalyteName[nonwoodyindex]),
-                               as.character(data$VariableResult[nonwoodyindex])))
-  colnames(nonwoody) <- c("id", "AnalyteName", "result")
-  nonwoody$result[nonwoody$result %in% 'Not Recorded'] <- NA 
-  nonwoody$result <- as.numeric(as.character(nonwoody$result))
-  head(nonwoody)
-  woody$XPGVEG<-apply((cbind(woody$result, nonwoody$result)), 1, sum, na.rm=T)
-  XPGVEG_subcounting<-(data.frame(!(is.na(woody$result)&(is.na(nonwoody$result))), as.character(woody$id)))
-  XPGVEG_total <-tapply(XPGVEG_subcounting[[1]], (XPGVEG_subcounting[[2]]), sum)
+  # woodyindex <- which(data$AnalyteName == "Riparian GroundCover Woody Shrubs")
+  # woody <- data.frame(cbind(data$id[woodyindex], as.character(data$AnalyteName[woodyindex]),
+  #                           as.character(data$VariableResult[woodyindex])))
+  # colnames(woody) <- c("id", "AnalyteName", "result")
+  # woody$result[woody$result %in% 'Not Recorded'] <- NA 
+  # woody$result <- as.numeric(as.character(woody$result))
+  # head(woody)
+  # nonwoodyindex <- which(data$AnalyteName == "Riparian GroundCover NonWoody Plants")
+  # nonwoody <- data.frame(cbind(data$id[nonwoodyindex], as.character(data$AnalyteName[nonwoodyindex]),
+  #                              as.character(data$VariableResult[nonwoodyindex])))
+  # colnames(nonwoody) <- c("id", "AnalyteName", "result")
+  # nonwoody$result[nonwoody$result %in% 'Not Recorded'] <- NA 
+  # nonwoody$result <- as.numeric(as.character(nonwoody$result))
+  # head(nonwoody)
+  # woody$XPGVEG<-apply((cbind(woody$result, nonwoody$result)), 1, sum, na.rm=T)
+  # XPGVEG_subcounting<-(data.frame(!(is.na(woody$result)&(is.na(nonwoody$result))), as.character(woody$id)))
+  # XPGVEG_total <-tapply(XPGVEG_subcounting[[1]], (XPGVEG_subcounting[[2]]), sum)
+  # 
+  # woody$XPGVEG[which(is.na(woody$XPGVEG))] = 0
+  # XPGVEG_subcountf <- function(data){
+  #   length(which(data != 0))
+  # }
+  # XPGVEG_subcount <- tapply(woody$XPGVEG, woody$id, XPGVEG_subcountf)
+  # XPGVEG.result <- round(XPGVEG_subcount/XPGVEG_total, 2)
+  # XPGVEG.count <- XPGVEG_total
+
+
+  # XPGVEG ------------------------------------------------------------------
+  XPGVEG <- data %>%
+    dplyr::filter(AnalyteName %in% c('Riparian GroundCover NonWoody Plants','Riparian GroundCover Woody Shrubs')) %>%
+    dplyr::mutate(
+      VariableResult = as.numeric(as.character(VariableResult))
+    ) %>%
+    dplyr::group_by(id, LocationCode) %>%
+    dplyr::summarize(
+      groundCoverPresence = sum(VariableResult)
+    ) %>% 
+    dplyr::group_by(id) %>%
+    dplyr::summarize(
+      XPGVEG.count = sum(!is.na(groundCoverPresence)),
+      XPGVEG.result = round(sum(groundCoverPresence > 0) / XPGVEG.count, 2)
+    ) %>%
+    as.data.frame %>%
+    tibble::column_to_rownames('id')
+    
   
-  woody$XPGVEG[which(is.na(woody$XPGVEG))] = 0
-  XPGVEG_subcountf <- function(data){
-    length(which(data != 0))
-  }
-  XPGVEG_subcount <- tapply(woody$XPGVEG, woody$id, XPGVEG_subcountf)
-  XPGVEG.result <- round(XPGVEG_subcount/XPGVEG_total, 2)
-  XPGVEG.count <- XPGVEG_total
   
+    
   ###XPCM###
   aframe <- as.data.frame(reshape::cast(data, id + LocationCode ~ AnalyteName, value = "VariableResult",fun.aggregate='length'))
   
@@ -341,7 +363,9 @@ ripveg <- function(data){
   
   ###Write to file###
   results <- cbind(XGB, XGH, XGW, XM, XC, XG.result, XG.count, XCM.result, XCM.count, XCMG.result, XCMG.count, 
-                   XPMID.result, XPMID.count, XPCAN.result, XPCAN.count, XPGVEG.result, XPGVEG.count, XPCM_XPCMG_XPMGVEG)
+                   XPMID.result, XPMID.count, XPCAN.result, XPCAN.count, XPCM_XPCMG_XPMGVEG)
+  
+  results <- merge(results, XPGVEG, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
   
   return(results)
   
