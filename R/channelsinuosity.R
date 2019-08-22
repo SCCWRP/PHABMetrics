@@ -9,12 +9,14 @@
 #' channelsinuosity(sampdat)
 channelsinuosity <- function(data){
 
-  data <- data[which(data$AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach')),]
+  data <- data[which(data$AnalyteName %in% c('Slope', 'Length, Segment', 
+                                             'Elevation Difference', 'Bearing', 
+                                             'Proportion', 'Length, Reach')),]
   
   # XSLOPE data ----------------------------------------------------------------------------------
   data_spread <- data %>%
     dplyr::group_by(id) %>%
-    arrange(id) %>% 
+    dplyr::arrange(id) %>% 
     dplyr::mutate(
       Result = dplyr::case_when(
         AnalyteName == 'Proportion' ~ Result/100, # convert % to proportion
@@ -22,39 +24,37 @@ channelsinuosity <- function(data){
         TRUE ~ Result
       )
     ) %>% 
-    select(id, LocationCode, AnalyteName, Result, FractionName) %>% 
-    group_by(id, LocationCode, AnalyteName, FractionName) %>% 
-    mutate(grouped_id = row_number()) %>%
-    spread(AnalyteName, Result) %>% 
-    mutate(
-      Slope = if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope),
+    dplyr::select(id, LocationCode, AnalyteName, Result, FractionName) %>% 
+    dplyr::group_by(id, LocationCode, AnalyteName, FractionName) %>% 
+    dplyr::mutate(grouped_id = row_number()) %>%
+    tidyr::spread(AnalyteName, Result) %>% 
+    dplyr::mutate(
+      Slope = dplyr::if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope),
       p_slope = Slope * Proportion,
       p_bear = Bearing * Proportion
     )
     
   ## XSLOPE calculation --------------------------------------------------------------------------
   XSLOPE <- data_spread %>% 
-    group_by(id, LocationCode) %>%
-    summarize(p_slope = sum(p_slope)) %>%
-    group_by(id) %>% 
-    summarize(
-      XSLOPE.count = sum(na.omit(p_slope) <= 0),
+    dplyr::group_by(id, LocationCode) %>%
+    dplyr::summarize(p_slope = sum(p_slope)) %>%  #sum across all FractionName for each LocationCode
+    dplyr::group_by(id) %>% 
+    dplyr::summarize(
+      XSLOPE.count = length(na.omit(p_slope)),
       XSLOPE.result = mean(p_slope, na.rm = T),
       XSLOPE.sd = sd(p_slope, na.rm = T)
     )
     
   ## SLOPE_pcnt calculation -------------------------------------------------------------------------
   SLOPE_pcnt <- data_spread %>% 
-    group_by(id, LocationCode,`Length, Segment`) %>%
-    summarize(p_slope = sum(p_slope)) %>%
-    group_by(id) %>% 
-    mutate(
+    dplyr::group_by(id) %>% 
+    dplyr::mutate(
       slope_0   = p_slope <= 0,
       slope_0_5 = p_slope <= 0.5,
       slope_1   = p_slope <= 1,
       slope_2   = p_slope <= 2
     ) %>% 
-    summarize(
+    dplyr::summarize(
       SLOPE_0.count = sum(slope_0),
       SLOPE_0_5.count = sum(slope_0_5),
       SLOPE_1.count = sum(slope_1),
@@ -68,10 +68,10 @@ channelsinuosity <- function(data){
   # XBEAR -------------------------------------------------------------------------------------
   
   XBEAR <- data_spread %>% 
-    group_by(id, LocationCode, Proportion) %>%
-    summarize(p_bear = sum(p_bear)) %>% 
-    group_by(id) %>% 
-    summarize(
+    dplyr::group_by(id, LocationCode, Proportion) %>%
+    dplyr::summarize(p_bear = sum(p_bear)) %>% 
+    dplyr::group_by(id) %>% 
+    dplyr::summarize(
       XBEARING.count = length(na.omit(p_bear)),
       XBEARING.result = sum(p_bear[Proportion == 1])/XBEARING.count,
       XBEARING.sd = sd(na.omit(p_bear))
@@ -80,25 +80,25 @@ channelsinuosity <- function(data){
   # SINUS -------------------------------------------------------------------------------------
   
   SINUS <- data_spread %>% 
-    group_by(id, LocationCode, FractionName) %>% 
-    mutate(angle = Bearing/360 * 2*pi) %>% 
-    group_by(id) %>% 
-    summarize(
+    dplyr::group_by(id, LocationCode, FractionName) %>% 
+    dplyr::mutate(angle = Bearing/360 * 2*pi) %>% 
+    dplyr::group_by(id) %>% 
+    dplyr::summarize(
       cos_ = sum((`Length, Segment` * cos(angle)))^2,
       sin_ = sum((`Length, Segment` * sin(angle)))^2,
       SINUS = sum(`Length, Segment`)/sqrt(sum(cos_, sin_))
     ) %>% 
-    mutate(
+    dplyr::mutate(
       cos_ = NULL,
       sin_ = NULL
     )
 
   
   result <- XSLOPE %>% 
-    inner_join(SLOPE_pcnt, by = 'id') %>% 
-    inner_join(XBEAR, by = 'id') %>% 
-    inner_join(SINUS, by = 'id') %>% 
-    column_to_rownames('id')
+    dplyr::inner_join(SLOPE_pcnt, by = 'id') %>% 
+    dplyr::inner_join(XBEAR, by = 'id') %>% 
+    dplyr::inner_join(SINUS, by = 'id') %>% 
+    tibble::column_to_rownames('id')
 
   return(result)
   
