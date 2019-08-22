@@ -97,7 +97,8 @@ channelsinuosity <- function(data){
   result <- XSLOPE %>% 
     inner_join(SLOPE_pcnt, by = 'id') %>% 
     inner_join(XBEAR, by = 'id') %>% 
-    inner_join(SINUS, by = 'id')
+    inner_join(SINUS, by = 'id') %>% 
+    column_to_rownames('id')
 
   return(result)
   
