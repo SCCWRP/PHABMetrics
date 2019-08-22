@@ -12,7 +12,7 @@ channelsinuosity <- function(data){
   data <- data[which(data$AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach')),]
   
   # XSLOPE data ----------------------------------------------------------------------------------
-  data_slope <- data %>%
+  data_spread <- data %>%
     dplyr::group_by(id) %>%
     arrange(id) %>% 
     dplyr::mutate(
@@ -27,26 +27,26 @@ channelsinuosity <- function(data){
     mutate(grouped_id = row_number()) %>%
     spread(AnalyteName, Result) %>% 
     mutate(
-      Slope = if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope)
-    ) %>% 
-    mutate(
-      p_slope = Slope * Proportion
+      Slope = if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope),
+      p_slope = Slope * Proportion,
+      p_bear = Bearing * Proportion
     )
     
   ## XSLOPE calculation --------------------------------------------------------------------------
-  XSLOPE <- data_slope %>% 
-    # group_by(id, LocationCode) %>% 
-    # summarize(p_slope = sum(p_slope)) %>% 
+  XSLOPE <- data_spread %>% 
+    group_by(id, LocationCode) %>%
+    summarize(p_slope = sum(p_slope)) %>%
     group_by(id) %>% 
     summarize(
       XSLOPE.count = sum(na.omit(p_slope) <= 0),
       XSLOPE.result = mean(p_slope, na.rm = T),
-      XSLOPE.sd = sd(p_slope, na.rm = T),
-      SLOPE_0.count = length(na.omit(p_slope) <= 0)
+      XSLOPE.sd = sd(p_slope, na.rm = T)
     )
     
   ## SLOPE_pcnt calculation -------------------------------------------------------------------------
-  SLOPE_pcnt <- data_slope %>% 
+  SLOPE_pcnt <- data_spread %>% 
+    group_by(id, LocationCode,`Length, Segment`) %>%
+    summarize(p_slope = sum(p_slope)) %>%
     group_by(id) %>% 
     mutate(
       slope_0   = p_slope <= 0,
@@ -65,34 +65,39 @@ channelsinuosity <- function(data){
       SLOPE_2.result = sum(`Length, Segment`[slope_2])/sum(`Length, Segment`) * 100
     )
   
-  ###XBEARING###
+  # XBEAR -------------------------------------------------------------------------------------
   
-  casted$XBEARING <- casted$Bearing * (casted$Proportion/100)
-  XBEARING_sum <- tapply(casted$XBEARING, casted$id, sumna)
-  XBEARING.count <- tapply(casted$XBEARING, casted$id, lengthna)
-  XBEARING.result <- XBEARING_sum/XBEARING.count
-  XBEARING.sd <- tapply(casted$XBEARING, casted$id, sdna)
+  XBEAR <- data_spread %>% 
+    group_by(id, LocationCode, Proportion) %>%
+    summarize(p_bear = sum(p_bear)) %>% 
+    group_by(id) %>% 
+    summarize(
+      XBEARING.count = length(na.omit(p_bear)),
+      XBEARING.result = sum(p_bear[Proportion == 1])/XBEARING.count,
+      XBEARING.sd = sd(na.omit(p_bear))
+    )
   
-  ###SINU###
+  # SINUS -------------------------------------------------------------------------------------
   
-  cos1 <- function(i, Segment, Bearing){(Segment[i] * cos((Bearing[i]/360)*2*pi))}
-  sin1 <- function(i, Segment, Bearing){(Segment[i] * sin((Bearing[i]/360)*2*pi))}
+  SINUS <- data_spread %>% 
+    group_by(id, LocationCode, FractionName) %>% 
+    mutate(angle = Bearing/360 * 2*pi) %>% 
+    group_by(id) %>% 
+    summarize(
+      cos_ = sum((`Length, Segment` * cos(angle)))^2,
+      sin_ = sum((`Length, Segment` * sin(angle)))^2,
+      SINUS = sum(`Length, Segment`)/sqrt(sum(cos_, sin_))
+    ) %>% 
+    mutate(
+      cos_ = NULL,
+      sin_ = NULL
+    )
+
   
-  #cast(data, id + FractionName ~ AnalyteName, value = "Result", fun.aggregate=mean)
-  casted$cos <- unlist(lapply(1:length(casted$Segment), Segment=casted$Segment, FUN=cos1, Bearing = casted$Bearing))
-  casted$sin <- unlist(lapply(1:length(casted$Segment), Segment=casted$Segment, FUN=sin1, Bearing = casted$Bearing))
-  
-  
-  distance <- tapply(casted$Segment, casted$id, sumna)
-  sin2 <- tapply(casted$sin, casted$id, sumna)
-  cos2 <- tapply(casted$cos, casted$id, sumna)
-  casted$ttt <- unlist(lapply(1:length(casted$id), function(i, si, co) 2*si[i], si=casted$sin, co=casted$cos))
-  SINU.NOT_WORKING <- distance/(tapply(casted$ttt, casted$id, sumna))
-  
-  ###Write to file###
-  
-  result <- cbind(XSLOPE.result, XSLOPE.count, XSLOPE.sd, SLOPE_0.result, SLOPE_0.count, SLOPE_0_5.result,
-                  SLOPE_0_5.count, SLOPE_1.result, SLOPE_1.count, SLOPE_2.result, SLOPE_2.count, XBEARING.result, XBEARING.count, XBEARING.sd, SINU.NOT_WORKING)
+  result <- XSLOPE %>% 
+    inner_join(SLOPE_pcnt, by = 'id') %>% 
+    inner_join(XBEAR, by = 'id') %>% 
+    inner_join(SINUS, by = 'id')
 
   return(result)
   
