@@ -73,7 +73,7 @@ quality <- function(data){
                         sd(as.numeric(as.character(df[df$AnalyteName == 'pH',]$Result)), na.rm = T) %>% round(2)
                       }),
                       XWSL.sd = purrr::map(data, function(df){
-                        sd(as.numeric(as.character(df[df$AnalyteName == "Salinity",]$Result)), na.rm = T) %>% round(2)
+                        sd(as.numeric(as.character(df[df$AnalyteName == "Salinity",]$Result)), na.rm = T) %>% round(1)
                       }),
                       XWSC.sd = purrr::map(data, function(df){
                         sd(as.numeric(as.character(df[df$AnalyteName == "SpecificConductivity",]$Result)), na.rm = T) %>% round(2)
