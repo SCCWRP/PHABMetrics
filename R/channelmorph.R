@@ -8,6 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' channelmorph(sampdat)
 channelmorph <- function(data){
+  print("channelmorph")
   data <- data[which(data$AnalyteName %in% c('Cascade/Falls', 'Dry', 'Glide', 'Pool', 'Rapid', 'Riffle', 'Run')),]
   ###Compute PCT_CF###
   
@@ -241,7 +242,7 @@ channelmorph <- function(data){
   # print(results$PCT_DR.sd)
   # print("results$PCT_GL.sd")
   # print(results$PCT_GL.sd)
-  
+  print("End channelmorph")
   return(results)
   
 }

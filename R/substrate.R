@@ -10,6 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' substrate(sampdat)
 substrate <- function(data){
+  print("substrate")
   data <- data[which(data$AnalyteName %in% c('Substrate Size Class', 'Embeddedness', 'CPOM')),]
   
   # the code that runs below this line messed up the XEMBED metric somehow. Specifically it messed up the counts
@@ -476,7 +477,7 @@ substrate <- function(data){
   
   # merge result with the percentile metrics on row names
   result <- merge(result, percentiles, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
-  
+  print("End substrate")
   return(result)
   
 }

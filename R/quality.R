@@ -8,6 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' quality(sampdat)
 quality <- function(data){
+  print("quality")
   data <- data[which(data$AnalyteName %in% c("Alkalinity as CaCO3", "Oxygen, Dissolved",
                                                       "pH", "Salinity", "SpecificConductivity",
                                                       "Temperature", "Turbidity")),]
@@ -91,6 +92,7 @@ quality <- function(data){
 
   rownames(quality_metrics) <- quality_metrics$id
   quality_metrics <- quality_metrics %>% dplyr::select(-id)
+  print("End quality")
   return(quality_metrics)
   
 }

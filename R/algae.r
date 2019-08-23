@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' algae(sampdat)
 algae <- function(data){
-
+  print("Algae")
   data <- data[which(data$AnalyteName %in% c('Microalgae Thickness', 'Macrophyte Cover', 'Macroalgae Cover, Attached', 'Macroalgae Cover, Unattached')),]
   
   lengthna <- function(x){
@@ -352,6 +352,6 @@ algae <- function(data){
     as.data.frame %>%
     tibble::column_to_rownames('Row.names')
 
-
+  print("End Algae")
   return(algae_results_final)
 }

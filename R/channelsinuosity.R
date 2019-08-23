@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' channelsinuosity(sampdat)
 channelsinuosity <- function(data){
-
+  print("channelsinuosity")
   data <- data[which(data$AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach')),]
   
   # XSLOPE data ----------------------------------------------------------------------------------
@@ -123,6 +123,6 @@ channelsinuosity <- function(data){
     dplyr::inner_join(XBEARING, by = 'id') %>%
     dplyr::inner_join(SINU, by = 'id') %>%
     tibble::column_to_rownames('id')
-  
+  print("end channelsinuosity")
   return(result)
 }

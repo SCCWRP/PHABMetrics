@@ -11,7 +11,7 @@
 #' phabmetrics(sampdat)
 #' }
 phabmetrics <- function(data){
-  
+  print("phabmetrics")
   # format input
   data <- phabformat(data)
   
@@ -55,7 +55,7 @@ phabmetrics <- function(data){
   #print(out$PCT_CF.sd)
   #print("out$PCT_GL.sd")
   #print(out$PCT_GL.sd)
-  
+  print("End phabmetrics")
   return(out)
   
 }

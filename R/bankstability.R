@@ -8,6 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' bankstability(sampdat)
 bankstability <- function(data){
+  print("bankstability")
   data <- data[which(data$AnalyteName %in% c('Bank Stability')),]
   ###PBM_S###
   
@@ -39,7 +40,7 @@ bankstability <- function(data){
   
   ###Write to file###
   results <- cbind(PBM_S.result, PBM_S.count, PBM_V.result, PBM_V.count, PBM_E.result, PBM_E.count)
-
+  print("End bankstability")
   return(results)
   
 }

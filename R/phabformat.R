@@ -11,7 +11,7 @@
 
 
 phabformat <- function(data){
-  
+  print("phabformat")
   # format column classes
   data <- data %>% 
     dplyr::mutate(
@@ -35,6 +35,7 @@ phabformat <- function(data){
   data <- data %>% 
     tidyr::unite('id', StationCode, SampleDate, SampleAgencyCode, remove = F) %>% 
     data.frame(stringsAsFactors = F)
+  print("end phabformat")
   return(data)
 }
 
