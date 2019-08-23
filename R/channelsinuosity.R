@@ -22,14 +22,14 @@ channelsinuosity <- function(data){
         TRUE ~ Result
       )
     ) %>% 
-    select(id, LocationCode, AnalyteName, Result, FractionName) %>% 
-    group_by(id, LocationCode, AnalyteName, FractionName) %>% 
-    mutate(grouped_id = row_number()) %>%
-    spread(AnalyteName, Result) %>% 
-    mutate(
+    dplyr::select(id, LocationCode, AnalyteName, Result, FractionName) %>% 
+    dplyr::group_by(id, LocationCode, AnalyteName, FractionName) %>% 
+    dplyr::mutate(grouped_id = row_number()) %>%
+    tidyr::spread(AnalyteName, Result) %>% 
+    dplyr::mutate(
       Slope = if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope)
     ) %>% 
-    mutate(
+    dplyr::mutate(
       p_slope = Slope * Proportion
     )
     
@@ -37,10 +37,10 @@ channelsinuosity <- function(data){
   # We believe that SWAMP was mistakenly counting fractions as if they were unique locations, thus throwing off the 
   #  value for XSLOPE.count
   XSLOPE <- data_slope %>% 
-    group_by(id, LocationCode) %>% 
-    summarize(p_slope = sum(p_slope)) %>% 
-    group_by(id) %>% 
-    summarize(
+    dplyr::group_by(id, LocationCode) %>% 
+    dplyr::summarize(p_slope = sum(p_slope)) %>% 
+    dplyr::group_by(id) %>% 
+    dplyr::summarize(
       XSLOPE.count = sum(!is.na(p_slope)),
       XSLOPE.result = round(mean(p_slope, na.rm = T), 1),
       XSLOPE.sd = round(sd(p_slope, na.rm = T), 2)
@@ -48,14 +48,14 @@ channelsinuosity <- function(data){
     
   ## SLOPE_pcnt calculation -------------------------------------------------------------------------
   SLOPE_pcnt <- data_slope %>% 
-    group_by(id) %>% 
-    mutate(
+    dplyr::group_by(id) %>% 
+    dplyr::mutate(
       slope_0   = Slope <= 0,
       slope_0_5 = Slope <= 0.5,
       slope_1   = Slope <= 1,
       slope_2   = Slope <= 2
     ) %>% 
-    summarize(
+    dplyr::summarize(
       SLOPE_0.count = sum(!is.na(slope_0)),
       SLOPE_0_5.count = sum(!is.na(slope_0_5)),
       SLOPE_1.count = sum(!is.na(slope_1)),
