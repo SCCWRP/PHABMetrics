@@ -73,7 +73,7 @@ channelsinuosity <- function(data){
 
   data_bearing <- data %>%
     dplyr::group_by(id) %>%
-    arrange(id) %>% 
+    dplyr::arrange(id) %>% 
     dplyr::mutate(
       Result = dplyr::case_when(
         AnalyteName == 'Proportion' ~ Result/100, # convert % to proportion
