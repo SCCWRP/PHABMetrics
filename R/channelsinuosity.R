@@ -27,7 +27,7 @@ channelsinuosity <- function(data){
     dplyr::mutate(grouped_id = row_number()) %>%
     tidyr::spread(AnalyteName, Result) %>% 
     dplyr::mutate(
-      Slope = if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope)
+      Slope = dplyr::if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope)
     ) %>% 
     dplyr::mutate(
       p_slope = Slope * Proportion
