@@ -62,11 +62,11 @@ bankmorph <- function(data){
   
   ###XWDEPTH###
   XWDEPTHdata <- data %>% 
-    filter(
+    dplyr::filter(
       AnalyteName == 'StationWaterDepth',
       MethodName == 'FieldMeasure'
     ) %>%
-    select(
+    dplyr::select(
       id, Result
     )
                             
@@ -79,11 +79,11 @@ bankmorph <- function(data){
   ###XWIDTH###
   
   XWIDTHdata <- data %>%
-    filter(
+    dplyr::filter(
       AnalyteName == 'Wetted Width',
       MethodName == 'FieldMeasure'
     ) %>%
-    select(
+    dplyr::select(
       id, Result
     )
   # Just because I don't know how many other times he references the column 'result' with lowercase r in the script
