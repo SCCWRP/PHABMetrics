@@ -88,14 +88,29 @@ channelsinuosity <- function(data){
     dplyr::summarize(
       cos_ = sum((`Length, Segment` * cos(angle)))^2,
       sin_ = sum((`Length, Segment` * sin(angle)))^2,
-      SINU.result = sum(`Length, Segment`)/sqrt(sum(cos_, sin_))
+      SINU.result = round(sum(`Length, Segment`)/sqrt(sum(cos_, sin_)), 2 ),
+      SINU.count = sum((!is.na(`Length, Segment`)) & (!is.na(Bearing)) )
     ) %>% 
     dplyr::mutate(
       cos_ = NULL,
       sin_ = NULL
     )
-
   
+  # SINUS <- data_bearing %>%
+  #   dplyr::group_by(id) %>%
+  #   dplyr::mutate(
+  #     bearing_radians = Bearing * pi / 180,
+  #     cos_bearing = cos(bearing_radians),
+  #     sin_bearing = sin(bearing_radians)
+  #   ) %>% 
+  #   dplyr::summarize(
+  #     SINU.count = sum((!is.na(`Length, Segment`)) & (!is.na(Bearing)) ),
+  #     SINU.result = sum(`Length, Segment`, na.rm = T) / sqrt((sum(`Length, Segment` * cos_bearing, na.rm = T)^2) + (sum(`Length, Segment` * sin_bearing, na.rm = T)^2)),
+  #     SINU.result = round(SINU.result, 2)
+  #   )
+  
+
+  view(SINUS)
   result <- XSLOPE %>% 
     dplyr::inner_join(SLOPE_pcnt, by = 'id') %>% 
     dplyr::inner_join(XBEAR, by = 'id') %>% 
