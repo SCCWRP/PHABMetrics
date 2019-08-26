@@ -100,11 +100,7 @@ channelsinuosity <- function(data){
     dplyr::inner_join(SINUS, by = 'id') %>% 
     tibble::column_to_rownames('id')
 
-  # Return final result #
-  result <- dplyr::inner_join(XSLOPE, SLOPE_pcnt, by = 'id') %>% 
-    dplyr::inner_join(XBEARING, by = 'id') %>%
-    dplyr::inner_join(SINU, by = 'id') %>%
-    tibble::column_to_rownames('id')
+  
   print("end channelsinuosity")
   return(result)
 }
