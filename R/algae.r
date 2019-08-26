@@ -348,10 +348,8 @@ algae <- function(data){
   algae_results_final <- merge(algae_results_final, PCT_MAP, by = 'row.names') %>%
     as.data.frame %>%
     tibble::column_to_rownames('Row.names') %>%
-    merge(PCT_NSA, by = 'row.names') %>%
-    as.data.frame %>%
+    merge(PCT_NSA, by = 'row.names') %>% 
     tibble::column_to_rownames('Row.names')
-
-  print("End Algae")
+    
   return(algae_results_final)
 }

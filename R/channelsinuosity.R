@@ -8,11 +8,13 @@
 #' sampdat <- phabformat(sampdat)
 #' channelsinuosity(sampdat)
 channelsinuosity <- function(data){
-  print("channelsinuosity")
-  data <- data[which(data$AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach')),]
+
+  data <- data[which(data$AnalyteName %in% c('Slope', 'Length, Segment', 
+                                             'Elevation Difference', 'Bearing', 
+                                             'Proportion', 'Length, Reach')),]
   
   # XSLOPE data ----------------------------------------------------------------------------------
-  data_slope <- data %>%
+  data_spread <- data %>%
     dplyr::group_by(id) %>%
     dplyr::arrange(id) %>% 
     dplyr::mutate(
@@ -27,96 +29,76 @@ channelsinuosity <- function(data){
     dplyr::mutate(grouped_id = row_number()) %>%
     tidyr::spread(AnalyteName, Result) %>% 
     dplyr::mutate(
-      Slope = if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope)
-    ) %>% 
-    dplyr::mutate(
-      p_slope = Slope * Proportion
+      Slope = dplyr::if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope),
+      p_slope = Slope * Proportion,
+      p_bear = Bearing * Proportion
     )
     
   ## XSLOPE calculation --------------------------------------------------------------------------
-  # We believe that SWAMP was mistakenly counting fractions as if they were unique locations, thus throwing off the 
-  #  value for XSLOPE.count
-  XSLOPE <- data_slope %>% 
-    dplyr::group_by(id, LocationCode) %>% 
-    dplyr::summarize(p_slope = sum(p_slope)) %>% 
+  XSLOPE <- data_spread %>% 
+    dplyr::group_by(id, LocationCode) %>%
+    dplyr::summarize(p_slope = sum(p_slope)) %>%  #sum across all FractionName for each LocationCode
     dplyr::group_by(id) %>% 
     dplyr::summarize(
-      XSLOPE.count = sum(!is.na(p_slope)),
-      XSLOPE.result = round(mean(p_slope, na.rm = T), 1),
-      XSLOPE.sd = round(sd(p_slope, na.rm = T), 2)
+      XSLOPE.count = length(na.omit(p_slope)),
+      XSLOPE.result = mean(p_slope, na.rm = T),
+      XSLOPE.sd = sd(p_slope, na.rm = T)
     )
     
   ## SLOPE_pcnt calculation -------------------------------------------------------------------------
-  SLOPE_pcnt <- data_slope %>% 
+  SLOPE_pcnt <- data_spread %>% 
     dplyr::group_by(id) %>% 
     dplyr::mutate(
-      slope_0   = Slope <= 0,
-      slope_0_5 = Slope <= 0.5,
-      slope_1   = Slope <= 1,
-      slope_2   = Slope <= 2
+      slope_0   = p_slope <= 0,
+      slope_0_5 = p_slope <= 0.5,
+      slope_1   = p_slope <= 1,
+      slope_2   = p_slope <= 2
     ) %>% 
     dplyr::summarize(
-      SLOPE_0.count = sum(!is.na(slope_0)),
-      SLOPE_0_5.count = sum(!is.na(slope_0_5)),
-      SLOPE_1.count = sum(!is.na(slope_1)),
-      SLOPE_2.count = sum(!is.na(slope_2)),
-      SLOPE_0.result = sum(`Length, Segment`[slope_0], na.rm=T)/sum(`Length, Segment`, na.rm=T) * 100,
-      SLOPE_0_5.result = sum(`Length, Segment`[slope_0_5], na.rm=T)/sum(`Length, Segment`, na.rm=T) * 100,
-      SLOPE_1.result = sum(`Length, Segment`[slope_1], na.rm=T)/sum(`Length, Segment`, na.rm=T) * 100,
-      SLOPE_2.result = sum(`Length, Segment`[slope_2], na.rm=T)/sum(`Length, Segment`, na.rm=T) * 100
+      SLOPE_0.count = sum(slope_0),
+      SLOPE_0_5.count = sum(slope_0_5),
+      SLOPE_1.count = sum(slope_1),
+      SLOPE_2.count = sum(slope_2),
+      SLOPE_0.result = sum(`Length, Segment`[slope_0])/sum(`Length, Segment`) * 100,
+      SLOPE_0_5.result = sum(`Length, Segment`[slope_0_5])/sum(`Length, Segment`) * 100,
+      SLOPE_1.result = sum(`Length, Segment`[slope_1])/sum(`Length, Segment`) * 100,
+      SLOPE_2.result = sum(`Length, Segment`[slope_2])/sum(`Length, Segment`) * 100
     )
   
+  # XBEAR -------------------------------------------------------------------------------------
   
-
-
-  # XBEARING AND SINU -------------------------------------------------------
-
-  data_bearing <- data %>%
-    dplyr::group_by(id) %>%
-    dplyr::arrange(id) %>% 
-    dplyr::mutate(
-      Result = dplyr::case_when(
-        AnalyteName == 'Proportion' ~ Result/100, # convert % to proportion
-        TRUE ~ Result
-      )
+  XBEAR <- data_spread %>% 
+    dplyr::group_by(id, LocationCode, Proportion) %>%
+    dplyr::summarize(p_bear = sum(p_bear)) %>% 
+    dplyr::group_by(id) %>% 
+    dplyr::summarize(
+      XBEARING.count = length(na.omit(p_bear)),
+      XBEARING.result = sum(p_bear[Proportion == 1])/XBEARING.count,
+      XBEARING.sd = sd(na.omit(p_bear))
+    )
+  
+  # SINUS -------------------------------------------------------------------------------------
+  
+  SINUS <- data_spread %>% 
+    dplyr::group_by(id, LocationCode, FractionName) %>% 
+    dplyr::mutate(angle = Bearing/360 * 2*pi) %>% 
+    dplyr::group_by(id) %>% 
+    dplyr::summarize(
+      cos_ = sum((`Length, Segment` * cos(angle)))^2,
+      sin_ = sum((`Length, Segment` * sin(angle)))^2,
+      SINUS = sum(`Length, Segment`)/sqrt(sum(cos_, sin_))
     ) %>% 
-    dplyr::select(-c('MethodName','Replicate','UnitName')) %>% 
-    dplyr::group_by(id, LocationCode, FractionName) %>%
-    tidyr::spread(AnalyteName, Result) %>%
     dplyr::mutate(
-      Proportion_x_Bearing = `Proportion` * `Bearing`
-    ) 
-    
-    
-  ### XBEARING ###
-  # Sum of total proportions for all Fractions at one location should add to one, otherwise, that location is excluded from the count
-  XBEARING <- data_bearing %>%
-    dplyr:: group_by(id, LocationCode) %>%
-    dplyr::summarize(
-      total_proportion = sum(Proportion, na.rm = T),
-      total_bearing = sum(Proportion_x_Bearing, na.rm = T)
-    ) %>%
-    dplyr::summarize(
-      XBEARING.result = round(sum(total_bearing, na.rm = T) / sum(total_proportion == 1, na.rm = T) ),
-      XBEARING.count = sum(total_proportion == 1),
-      XBEARING.sd = sd(total_bearing[total_proportion == 1], na.rm = T) %>% round(1)
+      cos_ = NULL,
+      sin_ = NULL
     )
-    
+
   
-  ###SINU###
-  SINU <- data_bearing %>%
-    dplyr::group_by(id) %>%
-    dplyr::mutate(
-      bearing_radians = Bearing * pi / 180,
-      cos_bearing = cos(bearing_radians),
-      sin_bearing = sin(bearing_radians)
-    ) %>% 
-    dplyr::summarize(
-      SINU.count = sum((!is.na(`Length, Segment`)) & (!is.na(Bearing)) ),
-      SINU.result = sum(`Length, Segment`, na.rm = T) / sqrt((sum(`Length, Segment` * cos_bearing, na.rm = T)^2) + (sum(`Length, Segment` * sin_bearing, na.rm = T)^2)),
-      SINU.result = round(SINU.result, 2)
-    )
-  
+  result <- XSLOPE %>% 
+    dplyr::inner_join(SLOPE_pcnt, by = 'id') %>% 
+    dplyr::inner_join(XBEAR, by = 'id') %>% 
+    dplyr::inner_join(SINUS, by = 'id') %>% 
+    tibble::column_to_rownames('id')
 
   # Return final result #
   result <- dplyr::inner_join(XSLOPE, SLOPE_pcnt, by = 'id') %>% 
