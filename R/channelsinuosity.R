@@ -54,14 +54,14 @@ channelsinuosity <- function(data){
       slope_2   = p_slope <= 2
     ) %>% 
     dplyr::summarize(
-      SLOPE_0.count = sum(slope_0),
-      SLOPE_0_5.count = sum(slope_0_5),
-      SLOPE_1.count = sum(slope_1),
-      SLOPE_2.count = sum(slope_2),
-      SLOPE_0.result = sum(`Length, Segment`[slope_0])/sum(`Length, Segment`) * 100,
-      SLOPE_0_5.result = sum(`Length, Segment`[slope_0_5])/sum(`Length, Segment`) * 100,
-      SLOPE_1.result = sum(`Length, Segment`[slope_1])/sum(`Length, Segment`) * 100,
-      SLOPE_2.result = sum(`Length, Segment`[slope_2])/sum(`Length, Segment`) * 100
+      SLOPE_0.count = sum(!is.na(slope_0)),
+      SLOPE_0_5.count = sum(!is.na(slope_0_5)),
+      SLOPE_1.count = sum(!is.na(slope_1)),
+      SLOPE_2.count = sum(!is.na(slope_2)),
+      SLOPE_0.result = sum(`Length, Segment`[slope_0], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
+      SLOPE_0_5.result = sum(`Length, Segment`[slope_0_5], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
+      SLOPE_1.result = sum(`Length, Segment`[slope_1], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
+      SLOPE_2.result = sum(`Length, Segment`[slope_2], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100
     )
   
   # XBEAR -------------------------------------------------------------------------------------
