@@ -166,39 +166,39 @@ habitat <- function(data){
   tidyr::nest() %>%
   dplyr::mutate(
     CFC_ALG.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Filamentous Algae')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Filamentous Algae')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_AQM.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Macrophytes')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Macrophytes')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_BRS.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Woody Debris <0.3 m')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Woody Debris <0.3 m')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_HUM.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Artificial Structures')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Artificial Structures')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_LTR.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Live Trees/Roots')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Live Trees/Roots')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_LWD.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Woody Debris >0.3 m')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Woody Debris >0.3 m')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_OHV.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Overhang.Veg')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Overhang.Veg')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_RCK.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Boulders')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Boulders')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     }),
     CFC_UCB.count = purrr::map(data, function(df){
-      df <- df %>% filter(AnalyteName == 'Fish Cover Undercut Banks')
+      df <- df %>% dplyr::filter(AnalyteName == 'Fish Cover Undercut Banks')
       return(sum((!is.na(df$VariableResult)) & (df$VariableResult != 'Not Recorded')))
     })
   ) %>% dplyr::select(-data) %>%
