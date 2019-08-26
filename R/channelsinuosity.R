@@ -26,12 +26,25 @@ channelsinuosity <- function(data){
     dplyr::select(id, LocationCode, AnalyteName, Result, FractionName) %>% 
     dplyr::group_by(id, LocationCode, AnalyteName, FractionName) %>% 
     dplyr::mutate(grouped_id = row_number()) %>%
-    tidyr::spread(AnalyteName, Result) %>% 
-    dplyr::mutate(
-      Slope = dplyr::if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope),
-      p_slope = Slope * Proportion,
-      p_bear = Bearing * Proportion
-    )
+    tidyr::spread(AnalyteName, Result)
+  
+    if ('Slope' %in% colnames(data_spread)) {
+      data_spread <- data_spread %>%
+        dplyr::mutate(
+          Slope = Slope,
+          p_slope = Slope * Proportion,
+          p_bear = Bearing * Proportion
+        )
+    } else if ('Elevation Difference' %in% colnames(data_spread)) {
+      data_spread <- data_spread %>%
+        dplyr::mutate(
+          Slope = `Elevation Difference`/`Length, Segment` * 100,
+          p_slope = Slope * Proportion,
+          p_bear = Bearing * Proportion
+        )
+    } else {
+      print("Unable to calculate metrics for cahnnelsinuosity. Missing Analytes 'Slope', and/or 'Elevation Difference'")
+    }
     
   ## XSLOPE calculation --------------------------------------------------------------------------
   XSLOPE <- data_spread %>% 
