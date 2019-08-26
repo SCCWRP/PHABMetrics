@@ -9,7 +9,8 @@
 #' channelsinuosity(sampdat)
 channelsinuosity <- function(data){
   print("channelsinuosity")
-  data <- data[which(data$AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach')),]
+  data <- data %>%
+    dplyr::filter(AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach'))
   
   # XSLOPE data ----------------------------------------------------------------------------------
   data_slope <- data %>%
