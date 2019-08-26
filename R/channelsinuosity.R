@@ -67,13 +67,16 @@ channelsinuosity <- function(data){
   # XBEAR -------------------------------------------------------------------------------------
   
   XBEAR <- data_spread %>% 
-    dplyr::group_by(id, LocationCode, Proportion) %>%
-    dplyr::summarize(p_bear = sum(p_bear)) %>% 
-    dplyr::group_by(id) %>% 
+    dplyr::arrange(id) %>%
+    dplyr::group_by(id, LocationCode) %>%
     dplyr::summarize(
-      XBEARING.count = length(na.omit(p_bear)),
-      XBEARING.result = sum(p_bear[Proportion == 1])/XBEARING.count,
-      XBEARING.sd = sd(na.omit(p_bear))
+      total_proportion = sum(Proportion, na.rm = T),
+      total_bearing = sum(p_bear, na.rm = T)
+    ) %>%
+    dplyr::summarize(
+      XBEARING.count = sum(total_proportion == 1, na.rm = T),
+      XBEARING.result = sum(total_bearing, na.rm = T) / XBEARING.count %>% round,
+      XBEARING.sd = sd(total_bearing[total_proportion == 1], na.rm = T) %>% round(1)
     )
   
   # SINUS -------------------------------------------------------------------------------------
