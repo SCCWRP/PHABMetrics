@@ -88,7 +88,7 @@ channelsinuosity <- function(data){
     dplyr::summarize(
       cos_ = sum((`Length, Segment` * cos(angle)))^2,
       sin_ = sum((`Length, Segment` * sin(angle)))^2,
-      SINUS = sum(`Length, Segment`)/sqrt(sum(cos_, sin_))
+      SINU.result = sum(`Length, Segment`)/sqrt(sum(cos_, sin_))
     ) %>% 
     dplyr::mutate(
       cos_ = NULL,
