@@ -311,7 +311,7 @@ algae <- function(data){
     dplyr::mutate(
       PCT_NSA.count = purrr::map(data, function(df){
         df <- df %>% 
-          group_by(LocationCode) %>%
+          dplyr::group_by(LocationCode) %>%
           dplyr::summarize(
             total_count = case_when(
               length(intersect(VariableResult, c('Present', 'Absent','0','1','2','3','4','5'))) > 0 ~ T,
