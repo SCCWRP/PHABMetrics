@@ -10,7 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' flow(sampdat)
 flow <- function(data){
-  # print("function - flow")
+  print("flow")
   # This function is used in calculation of FL_Q_F
   calcDistances = function(vector) {
     nreps = length(vector) # number of replicates
@@ -134,7 +134,7 @@ flow <- function(data){
         # print("XWV_F.sd")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
-        return(sd(df$Result, na.rm = T))
+        return(round(sd(df$Result, na.rm = T), 3))
       }),
       XWV_M.result = as.numeric(as.character(XWV_F.result)) / 3.28, # Feet to Meters
       XWV_M.count = XWV_F.count, # The counts for both metrics will be the same
@@ -142,7 +142,7 @@ flow <- function(data){
         # print("XWV_M.result")
         df <- df %>% dplyr::filter(LocationCode == 'X', AnalyteName == 'Velocity')
         if (df %>% nrow() == 0) {return(NA)}
-        return(sd(df$Result / 3.28, na.rm = T))
+        return(round(sd(df$Result / 3.28, na.rm = T), 3))
       }),
       MWVM_F.result = purrr::map(data, function(df){
         # print("MWVM_F.result")
@@ -170,6 +170,8 @@ flow <- function(data){
   # print("round appropriately")
   FlowMetrics$FL_Q_F.result <- FlowMetrics$FL_Q_F.result %>% round(3)
   FlowMetrics$FL_Q_M.result <- FlowMetrics$FL_Q_M.result %>% round(3)
+  FlowMetrics$FL_N_F.result <- FlowMetrics$FL_N_F.result %>% round(3)
+  FlowMetrics$FL_N_M.result <- FlowMetrics$FL_N_M.result %>% round(3)
   FlowMetrics$MWVM_F.result <- FlowMetrics$MWVM_F.result %>% round(1)
   FlowMetrics$MWVM_M.result <- FlowMetrics$MWVM_M.result %>% round(1)
   FlowMetrics$XWV_M.result <- FlowMetrics$XWV_M.result %>% round(2)
@@ -177,7 +179,7 @@ flow <- function(data){
   FlowMetrics$PWVZ.result <- FlowMetrics$PWVZ.result %>% round(1)
   
   result <- FlowMetrics
-  
+  print("End flow")
   return(result)
   
 }

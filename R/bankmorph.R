@@ -10,7 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' bankmorph(sampdat)
 bankmorph <- function(data){
-
+  print("bankmorph")
   data <- data[which(data$AnalyteName %in% c('Bankfull Height', 'Bankfull Width', 'StationWaterDepth', 'Wetted Width')),]
   data <- data[which(!(data$LocationCode == "X")),]
   data$Result[data$Result == -88] <- NA
@@ -62,11 +62,11 @@ bankmorph <- function(data){
   
   ###XWDEPTH###
   XWDEPTHdata <- data %>% 
-    filter(
+    dplyr::filter(
       AnalyteName == 'StationWaterDepth',
       MethodName == 'FieldMeasure'
     ) %>%
-    select(
+    dplyr::select(
       id, Result
     )
                             
@@ -79,11 +79,11 @@ bankmorph <- function(data){
   ###XWIDTH###
   
   XWIDTHdata <- data %>%
-    filter(
+    dplyr::filter(
       AnalyteName == 'Wetted Width',
       MethodName == 'FieldMeasure'
     ) %>%
-    select(
+    dplyr::select(
       id, Result
     )
   # Just because I don't know how many other times he references the column 'result' with lowercase r in the script
@@ -141,6 +141,6 @@ bankmorph <- function(data){
                    XWDEPTH.count, XWDEPTH.sd, XWIDTH.result, XWIDTH.count, XWIDTH.sd, XWDR.result, XWDR.count, 
                    XWDA.result, XWDA.count)
   results <- merge(results, XWDM, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
-  
+  print("End bankmorph")
   return(results)
 }

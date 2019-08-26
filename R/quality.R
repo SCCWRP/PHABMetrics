@@ -8,6 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' quality(sampdat)
 quality <- function(data){
+  print("quality")
   data <- data[which(data$AnalyteName %in% c("Alkalinity as CaCO3", "Oxygen, Dissolved",
                                                       "pH", "Salinity", "SpecificConductivity",
                                                       "Temperature", "Turbidity")),]
@@ -73,7 +74,7 @@ quality <- function(data){
                         sd(as.numeric(as.character(df[df$AnalyteName == 'pH',]$Result)), na.rm = T) %>% round(2)
                       }),
                       XWSL.sd = purrr::map(data, function(df){
-                        sd(as.numeric(as.character(df[df$AnalyteName == "Salinity",]$Result)), na.rm = T) %>% round(2)
+                        sd(as.numeric(as.character(df[df$AnalyteName == "Salinity",]$Result)), na.rm = T) %>% round(1)
                       }),
                       XWSC.sd = purrr::map(data, function(df){
                         sd(as.numeric(as.character(df[df$AnalyteName == "SpecificConductivity",]$Result)), na.rm = T) %>% round(2)
@@ -91,6 +92,7 @@ quality <- function(data){
 
   rownames(quality_metrics) <- quality_metrics$id
   quality_metrics <- quality_metrics %>% dplyr::select(-id)
+  print("End quality")
   return(quality_metrics)
   
 }

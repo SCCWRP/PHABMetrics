@@ -10,7 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' misc(sampdat)
 misc <- function(data){
-
+  print("misc")
   data <- data[which(data$AnalyteName %in% c('Riffle/Run Channel Alteration', 'Riffle/Run Epifaunal Substrate', 'Riffle/Run Sediment Deposition', 'Dominant Land Use', 'Evidence of Fire', 'Evidence of Recent Rainfall')),]
   ###Report###
   data$VariableResult[data$ResQualCode=="NR"] <- NA
@@ -48,7 +48,7 @@ misc <- function(data){
 
   colnames(misc_metrics)<- c("NFC_DLU.result", "NFC_EFR.result", "NFC_ERN.result",
                              "RBP_CHN.result", "RBP_EPI.result", "RBP_SED.result")
-  
+  print("End misc")
   return(misc_metrics)
   
 }

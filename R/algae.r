@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' algae(sampdat)
 algae <- function(data){
-
+  print("Algae")
   data <- data[which(data$AnalyteName %in% c('Microalgae Thickness', 'Macrophyte Cover', 'Macroalgae Cover, Attached', 'Macroalgae Cover, Unattached')),]
   
   lengthna <- function(x){
@@ -348,9 +348,10 @@ algae <- function(data){
   algae_results_final <- merge(algae_results_final, PCT_MAP, by = 'row.names') %>%
     as.data.frame %>%
     tibble::column_to_rownames('Row.names') %>%
-    merge(PCT_NSA, by = 'row.names')
+    merge(PCT_NSA, by = 'row.names') %>%
+    as.data.frame %>%
+    tibble::column_to_rownames('Row.names')
 
-  print(PCT_NSA)
-    
+  print("End Algae")
   return(algae_results_final)
 }

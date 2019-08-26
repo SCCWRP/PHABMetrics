@@ -11,9 +11,12 @@
 #' phabmetrics(sampdat)
 #' }
 phabmetrics <- function(data){
-  
+  print("phabmetrics")
   # format input
   data <- phabformat(data)
+  
+  # chkinp threw off values of sinuosity metrics by removing rows of data
+  # We should probably let the checker application check the data so users (and us) are aware of any problems with their data
   data <- chkinp(data, purge = TRUE)
   
   # calc metrics
@@ -43,13 +46,16 @@ phabmetrics <- function(data){
     ~ !any(grepl('[a-z,A-Z]', .x)), as.numeric
     )
   
+  print("out")
+  print(out %>% head())
+  
   #print("out$PCT_DR.sd")
   #print(out$PCT_DR.sd)
   #print("out$PCT_CF.sd")
   #print(out$PCT_CF.sd)
   #print("out$PCT_GL.sd")
   #print(out$PCT_GL.sd)
-  
+  print("End phabmetrics")
   return(out)
   
 }
