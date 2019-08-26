@@ -48,10 +48,10 @@ channelsinuosity <- function(data){
   SLOPE_pcnt <- data_spread %>% 
     dplyr::group_by(id) %>% 
     dplyr::mutate(
-      slope_0   = p_slope <= 0,
-      slope_0_5 = p_slope <= 0.5,
-      slope_1   = p_slope <= 1,
-      slope_2   = p_slope <= 2
+      slope_0   = Slope <= 0,
+      slope_0_5 = Slope <= 0.5,
+      slope_1   = Slope <= 1,
+      slope_2   = Slope <= 2
     ) %>% 
     dplyr::summarize(
       SLOPE_0.count = sum(!is.na(slope_0)),
