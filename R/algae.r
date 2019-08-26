@@ -333,7 +333,7 @@ algae <- function(data){
     dplyr::mutate(
       PCT_NSA.result = (100 * PCT_NSA.present / PCT_NSA.count) %>% round
     ) %>% 
-    select(-PCT_NSA.present) %>%
+    dplyr::select(-PCT_NSA.present) %>%
     as.data.frame %>%
     tibble::column_to_rownames('id')
   
