@@ -40,8 +40,8 @@ channelsinuosity <- function(data){
     dplyr::group_by(id) %>% 
     dplyr::summarize(
       XSLOPE.count = length(na.omit(p_slope)),
-      XSLOPE.result = mean(p_slope, na.rm = T),
-      XSLOPE.sd = sd(p_slope, na.rm = T)
+      XSLOPE.result = mean(p_slope, na.rm = T) %>% round(1),
+      XSLOPE.sd = sd(p_slope, na.rm = T) %>% round(2)
     )
     
   ## SLOPE_pcnt calculation -------------------------------------------------------------------------
