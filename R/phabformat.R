@@ -31,7 +31,9 @@ phabformat <- function(data){
       )
   
   data$VariableResult[data$ResQualCode=="NR"] <- "Not Recorded"
+  data$VariableResult[data$VariableResult=="NR"] <- "Not Recorded"
   data$Result[data$ResQualCode=="NR"] <- NA
+  data$Result[data$Result == -88] <- NA
   data <- data %>% 
     tidyr::unite('id', StationCode, SampleDate, SampleAgencyCode, remove = F) %>% 
     data.frame(stringsAsFactors = F)
