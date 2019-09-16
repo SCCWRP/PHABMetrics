@@ -99,9 +99,9 @@ channelsinuosity <- function(data){
     dplyr::mutate(angle = Bearing/360 * 2*pi) %>% 
     dplyr::group_by(id) %>% 
     dplyr::summarize(
-      cos_ = sum((`Length, Segment` * cos(angle)))^2,
-      sin_ = sum((`Length, Segment` * sin(angle)))^2,
-      SINU.result = round(sum(`Length, Segment`)/sqrt(sum(cos_, sin_)), 2 ),
+      cos_ = sum((`Length, Segment` * cos(angle)), na.rm = T)^2,
+      sin_ = sum((`Length, Segment` * sin(angle)), na.rm = T)^2,
+      SINU.result = round(sum(`Length, Segment`, na.rm = T)/sqrt(sum(cos_, sin_, na.rm=T)), 2 ),
       SINU.count = sum((!is.na(`Length, Segment`)) & (!is.na(Bearing)) )
     ) %>% 
     dplyr::mutate(
