@@ -17,6 +17,7 @@ substrate <- function(data){
   # I am preserving the data before it gets tweaked, so that XEMBED can work with "original.data" and the rest can work with "data"
   original.data <- data
 
+  data$Result[data$Result == -88] <- NA
   data <- data %>%
     dplyr::select(id, LocationCode, AnalyteName, VariableResult, Result) %>%
     unique %>%
