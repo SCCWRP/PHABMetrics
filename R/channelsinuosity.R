@@ -44,6 +44,7 @@ channelsinuosity <- function(data){
         )
     } else {
       print("Unable to calculate metrics for cahnnelsinuosity. Missing Analytes 'Slope', and/or 'Elevation Difference'")
+      return(data.frame())
     }
     
   ## XSLOPE calculation --------------------------------------------------------------------------
