@@ -35,7 +35,7 @@ phabformat <- function(data){
   data$Result[data$ResQualCode=="NR"] <- NA
   data$Result[data$Result == -88] <- NA
   data <- data %>% 
-    tidyr::unite('id', StationCode, SampleDate, SampleAgencyCode, remove = F) %>% 
+    tidyr::unite('id', StationCode, SampleDate, SampleAgencyCode, sep = "|", remove = F) %>% 
     data.frame(stringsAsFactors = F)
   print("end phabformat")
   return(data)
