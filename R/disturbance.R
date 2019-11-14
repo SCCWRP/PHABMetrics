@@ -11,7 +11,7 @@ disturbance <- function(data){
   print("disturbance")
   data <- data[which(data$AnalyteName %in% c('Riparian Bridges/Abutments', 'Riparian Buildings', 'Riparian Landfill/Trash', 'Riparian Logging', 'Riparian Mining', 'Riparian Orchards/Vineyards', 'Riparian Park/Lawn', 'Riparian Pasture/Range', 'Riparian Pavement', 'Riparian Pipes', 'Riparian Road', 'Riparian Row Crops', 'Riparian Vegetation Management', 'Riparian Wall/Dike')),]
   ###Set up###
-
+  
   data2 <- gsub("(Block|Channel)(\\w)", "\\2", data$LocationCode)
   data2 <- gsub(",\\sLeft", "", data2)
   data2 <- gsub(",\\sRight", "", data2)
@@ -20,7 +20,7 @@ disturbance <- function(data){
                          data$AnalyteName, data$VariableResult)
   colnames(reformed) <- c("id", "Location", "Trans", "AnalyteName", "VariableResult")
   reformed$VariableResult <- as.character(reformed$VariableResult)
-    
+  print("23")   
   reformed <- reformed %>% 
     dplyr::group_by(id, AnalyteName, Trans) %>% 
     tidyr::nest() %>% 
@@ -86,6 +86,7 @@ disturbance <- function(data){
       VariableResult = as.numeric(VariableResult)
     ) 
   
+  print("89")
   sumna <- function(data){sum(data, na.rm=T)}
   lengthna <- function(data){sum(!is.na(data))}
   
@@ -113,6 +114,7 @@ disturbance <- function(data){
             dplyr::select(-data) %>% 
             tidyr::unnest()
 
+  print("117")   
   reformed$Metric <- dplyr::case_when(
     reformed$AnalyteName == 'Riparian Wall/Dike' ~ 'W1H_WALL',
     reformed$AnalyteName == 'Riparian Buildings' ~ 'W1H_BLDG',
@@ -143,6 +145,7 @@ disturbance <- function(data){
   rownames(result) <- unique(reformed$id)
   colnames(result) <- paste(rep(statname, each=3), c(".result", ".count", ".sd"), sep="")
 
+  print("148")   
   for (i in 1:length(statname)){
     metric <- as.character(statname[i])
     # print(metric)
@@ -153,6 +156,7 @@ disturbance <- function(data){
     result[,paste(metric,'.count', sep='')] <- tmp$Count
     result[,paste(metric,'.sd', sep='')] <- round(tmp$sd, 3)
   }
+  print("159")   
 
   #result <- result %>% dplyr::mutate_at(dplyr::vars(dplyr::contains(".sd")),round, digits = 3)
   
