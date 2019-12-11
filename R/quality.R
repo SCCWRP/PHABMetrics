@@ -16,7 +16,7 @@ quality <- function(data){
                     dplyr::group_by(id) %>%
                     tidyr::nest() %>%
                     dplyr::mutate(
-                      XWAK.result = purrr::map(data, function(df){
+                      XWAT.result = purrr::map(data, function(df){
                         mean(as.numeric(as.character(df[df$AnalyteName == "Alkalinity as CaCO3",]$Result)), na.rm = T) %>% round(1)
                       }),
                       XWDO.result = purrr::map(data, function(df){
@@ -40,7 +40,7 @@ quality <- function(data){
                       XWTB.result = purrr::map(data, function(df){
                         mean(as.numeric(as.character(df[df$AnalyteName == "Turbidity",]$Result)), na.rm = T) %>% round(2)
                       }),
-                      XWAK.count = purrr::map(data, function(df){
+                      XWAT.count = purrr::map(data, function(df){
                         sum(!is.na(as.numeric(as.character(df[df$AnalyteName == "Alkalinity as CaCO3",]$Result))))
                       }),
                       XWDO.count = purrr::map(data, function(df){
@@ -64,7 +64,7 @@ quality <- function(data){
                       XWTB.count = purrr::map(data, function(df){
                         sum(!is.na(as.numeric(as.character(df[df$AnalyteName == "Turbidity",]$Result))))
                       }),
-                      XWAK.sd = purrr::map(data, function(df){
+                      XWAT.sd = purrr::map(data, function(df){
                         sd(as.numeric(as.character(df[df$AnalyteName == "Alkalinity as CaCO3",]$Result)), na.rm = T) %>% round(2)
                       }),
                       XWDO.sd = purrr::map(data, function(df){
