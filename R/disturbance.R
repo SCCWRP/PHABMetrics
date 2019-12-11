@@ -20,7 +20,6 @@ disturbance <- function(data){
                          data$AnalyteName, data$VariableResult)
   colnames(reformed) <- c("id", "Location", "Trans", "AnalyteName", "VariableResult")
   reformed$VariableResult <- as.character(reformed$VariableResult)
-  print("23")   
   reformed <- reformed %>% 
     dplyr::group_by(id, AnalyteName, Trans) %>% 
     tidyr::nest() %>% 
@@ -86,7 +85,6 @@ disturbance <- function(data){
       VariableResult = as.numeric(VariableResult)
     ) 
   
-  print("89")
   sumna <- function(data){sum(data, na.rm=T)}
   lengthna <- function(data){sum(!is.na(data))}
   
@@ -114,7 +112,6 @@ disturbance <- function(data){
             dplyr::select(-data) %>% 
             tidyr::unnest()
 
-  print("117")   
   reformed$Metric <- dplyr::case_when(
     reformed$AnalyteName == 'Riparian Wall/Dike' ~ 'W1H_WALL',
     reformed$AnalyteName == 'Riparian Buildings' ~ 'W1H_BLDG',
@@ -145,18 +142,14 @@ disturbance <- function(data){
   rownames(result) <- unique(reformed$id)
   colnames(result) <- paste(rep(statname, each=3), c(".result", ".count", ".sd"), sep="")
 
-  print("148")   
   for (i in 1:length(statname)){
     metric <- as.character(statname[i])
-    # print(metric)
     tmp <- reformed[which(grepl(metric,reformed$Metric)),]
-    # print(tmp)
     rownames(result) <- tmp$id
     result[,paste(metric,'.result', sep='')] <- round(tmp$Result, 2)
     result[,paste(metric,'.count', sep='')] <- tmp$Count
     result[,paste(metric,'.sd', sep='')] <- round(tmp$sd, 3)
   }
-  print("159")   
 
   #result <- result %>% dplyr::mutate_at(dplyr::vars(dplyr::contains(".sd")),round, digits = 3)
   
