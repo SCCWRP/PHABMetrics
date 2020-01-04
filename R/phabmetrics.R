@@ -5,7 +5,7 @@
 #' @export
 #' 
 #' @importFrom magrittr "%>%"
-#' 
+#'
 #' @examples 
 #' \dontrun{
 #' phabmetrics(sampdat)
