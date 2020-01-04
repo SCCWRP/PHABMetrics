@@ -33,6 +33,10 @@ Authors@R: c(
     role = c("aut"),
     email = "r7butler@yahoo.com"
     ),
+  person(given = "Quynh-Thi", family = "Ho",
+    role = c("aut"),
+    email = "qthi.ho@gmail.com"
+    ),
   person(given = "Raphael D.", family = "Mazor",
     role = c("ctb"),
     email = "raphaelm@sccwrp.org"
