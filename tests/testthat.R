@@ -1,4 +1,4 @@
 library(testthat)
 library(PHABMetrics)
 
-test_check("PHABMetrics")
+#test_check("PHABMetrics")
