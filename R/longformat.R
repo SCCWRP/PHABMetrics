@@ -5,7 +5,8 @@
 #' @export
 #' 
 #' @importFrom magrittr "%>%"
-#' @importFrom dplyr select
+#' @importFrom dplyr select full_join
+#' @importFrom tidyr gather
 #' 
 
 # Input to the function is the wide form of the metrics dataframe
