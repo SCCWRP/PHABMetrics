@@ -141,6 +141,6 @@ bankmorph <- function(data){
                    XWDEPTH.count, XWDEPTH.sd, XWIDTH.result, XWIDTH.count, XWIDTH.sd, XWDR.result, XWDR.count, 
                    XWDA.result, XWDA.count)
   results <- merge(results, XWDM, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
-  print("End bankmorph")
+
   return(results)
 }

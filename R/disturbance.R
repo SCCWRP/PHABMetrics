@@ -161,7 +161,7 @@ disturbance <- function(data){
   
     
     results <- cbind(result, W1_HALL_EMAP.result, W1_HALL_EMAP.count, W1_HALL_SWAMP.result, W1_HALL_SWAMP.count)
-    print("End disturbance")
+
   return(results)
   
 }

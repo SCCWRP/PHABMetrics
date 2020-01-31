@@ -10,7 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' densiometer(sampdat)
 densiometer <- function(data){
-  print("densiometer")
+
   data <- data[which(data$AnalyteName %in% c('Canopy Cover')),]
   
   x <- as.character(data$LocationCode)
@@ -53,7 +53,6 @@ densiometer <- function(data){
   ###Write to file###
   results <- cbind(XCDENMID.result, XCDENMID.count, XCDENMID.sd, XCDENBK.result, XCDENBK.count, XCDENBK.sd)
 
-  print("End densiometer")
-  return(results)
+    return(results)
   
 }

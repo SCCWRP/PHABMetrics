@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' ripveg(sampdat)
 ripveg <- function(data){
-  print("ripveg")
+
   data <- data[which(data$AnalyteName %in% c('Riparian GroundCover Barren', 'Riparian GroundCover NonWoody Plants', 'Riparian GroundCover Woody Shrubs', 'Riparian Lower Canopy All Vegetation', 'Riparian Upper Canopy All Trees', 'Riparian Lower Canopy All Vegetation', 'Riparian Upper Canopy All Trees', 'Riparian GroundCover Woody Shrubs', 'Riparian GroundCover NonWoody Plants')),]
   ###Slice Riparian GroundCover Barren Data ###
 
@@ -368,7 +368,7 @@ ripveg <- function(data){
   
   results <- merge(results, XPGVEG, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
   
-  print("End ripveg")
+
   return(results)
   
 }

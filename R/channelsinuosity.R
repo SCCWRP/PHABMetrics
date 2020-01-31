@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' channelsinuosity(sampdat)
 channelsinuosity <- function(data){
-  print("channelsinuosity")
+
   data <- data %>%
     dplyr::filter(AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach'))
   
@@ -116,6 +116,5 @@ channelsinuosity <- function(data){
     dplyr::inner_join(SINUS, by = 'id') %>% 
     tibble::column_to_rownames('id')
 
-  print("end channelsinuosity")
   return(result)
 }

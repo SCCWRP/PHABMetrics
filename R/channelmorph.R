@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' channelmorph(sampdat)
 channelmorph <- function(data){
-  print("channelmorph")
+
   data <- data[which(data$AnalyteName %in% c('Cascade/Falls', 'Dry', 'Glide', 'Pool', 'Rapid', 'Riffle', 'Run')),]
   ###Compute PCT_CF###
   
@@ -233,16 +233,7 @@ channelmorph <- function(data){
   # merge on the row names
   results <- merge(results, FlowHab, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
   
-  # print('results')
-  # print(results)
-  
-  # print("results$PCT_CF.sd")
-  # print(results$PCT_CF.sd)
-  # print("results$PCT_DR.sd")
-  # print(results$PCT_DR.sd)
-  # print("results$PCT_GL.sd")
-  # print(results$PCT_GL.sd)
-  print("End channelmorph")
+
   return(results)
   
 }

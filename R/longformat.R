@@ -48,13 +48,13 @@ longformat <- function(metrics) {
       full_join(
         metrics.count, 
         by = c(
-          'phab_sampleid','StationCode','SampleDate','SampleAgencyCode','variable'
+          'phab_sampleid','StationCode','SampleDate','SampleAgencyCode','Variable'
         )
       ) %>% 
       full_join(
         metrics.sd, 
         by = c(
-          'phab_sampleid','StationCode','SampleDate','SampleAgencyCode','variable'
+          'phab_sampleid','StationCode','SampleDate','SampleAgencyCode','Variable'
         )
       )
   )

@@ -79,7 +79,7 @@ phabmetrics <- function(data){
       )
     )
   
-  out <- longformat(out)
+  out <- longformat(out) %>% select(-phab_sampleid)
   
   return(out)
   
