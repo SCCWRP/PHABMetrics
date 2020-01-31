@@ -10,7 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' bankmorph(sampdat)
 bankmorph <- function(data){
-  print("bankmorph")
+
   data <- data[which(data$AnalyteName %in% c('Bankfull Height', 'Bankfull Width', 'StationWaterDepth', 'Wetted Width')),]
   data <- data[which(!(data$LocationCode == "X")),]
   data$Result[data$Result == -88] <- NA

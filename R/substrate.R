@@ -10,7 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' substrate(sampdat)
 substrate <- function(data){
-  print("substrate")
+
   data <- data[which(data$AnalyteName %in% c('Substrate Size Class', 'Embeddedness', 'CPOM')),]
   
   # the code that runs below this line messed up the XEMBED metric somehow. Specifically it messed up the counts
@@ -290,7 +290,6 @@ substrate <- function(data){
     tidyr::nest() %>%
     dplyr::mutate(
       SB_PT_D50.result = purrr::map(data, function(df){
-        #sort(df$value)[df$PTD50index[1]]
         median(df$value, na.rm = T)
       }),
       SB_PT_D10.result = purrr::map(data, function(df){
@@ -354,100 +353,6 @@ substrate <- function(data){
     tidyr::unnest() %>% as.data.frame %>% tibble::column_to_rownames('id')
 
   
-  
-  # Below is code that we believe does what is specified in the instructions. The built in quantile function 
-  # calculates the distribution and then grabs whatever percentile from that distribution.
-  # VBA was simply sorting and grabbing a value from a certain index.
-  # it depends in what Rafi wants though i think.
-  # percentiles <- sub %>%
-  #   dplyr::group_by(id) %>%
-  #   tidyr::nest() %>%
-  #   dplyr::mutate(
-  #     SB_PT_D50.result = purrr::map(data, function(df){
-  #       quantile(df$value, 0.5, na.rm = T)
-  #     }),
-  #     SB_PT_D10.result = purrr::map(data, function(df){
-  #       quantile(df$value, 0.1, na.rm = T)
-  #     }),
-  #     SB_PT_D25.result = purrr::map(data, function(df){
-  #       quantile(df$value, 0.25, na.rm = T)
-  #     }),
-  #     SB_PT_D75.result = purrr::map(data, function(df){
-  #       quantile(df$value, 0.75, na.rm = T)
-  #     }),
-  #     SB_PT_D90.result = purrr::map(data, function(df){
-  #       quantile(df$value, 0.90, na.rm = T)
-  #     }),
-  #     SB_PP_D50.result = purrr::map(data, function(df){
-  #       quantile(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value, 0.5, na.rm = T)
-  #     }),
-  #     SB_PP_D10.result = purrr::map(data, function(df){
-  #       quantile(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value, 0.1, na.rm = T)
-  #     }),
-  #     SB_PP_D25.result = purrr::map(data, function(df){
-  #       quantile(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value, 0.25, na.rm = T)
-  #     }),
-  #     SB_PP_D75.result = purrr::map(data, function(df){
-  #       quantile(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value, 0.75, na.rm = T)
-  #     }),
-  #     SB_PP_D90.result = purrr::map(data, function(df){
-  #       quantile(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value, 0.90, na.rm = T)
-  #     }),
-  #     SB_PT_D50.count = purrr::map(data, function(df){
-  #       sum(!is.na(df$value))
-  #     }),
-  #     SB_PT_D10.count = purrr::map(data, function(df){
-  #       sum(!is.na(df$value))
-  #     }),
-  #     SB_PT_D25.count = purrr::map(data, function(df){
-  #       sum(!is.na(df$value))
-  #     }),
-  #     SB_PT_D75.count = purrr::map(data, function(df){
-  #       sum(!is.na(df$value))
-  #     }),
-  #     SB_PT_D90.count = purrr::map(data, function(df){
-  #       sum(!is.na(df$value))
-  #     }),
-  #     SB_PP_D50.count = purrr::map(data, function(df){
-  #       sum(!is.na(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value))
-  #     }),
-  #     SB_PP_D10.count = purrr::map(data, function(df){
-  #       sum(!is.na(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value))
-  #     }),
-  #     SB_PP_D25.count = purrr::map(data, function(df){
-  #       sum(!is.na(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value))
-  #     }),
-  #     SB_PP_D75.count = purrr::map(data, function(df){
-  #       sum(!is.na(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value))
-  #     }),
-  #     SB_PP_D90.count = purrr::map(data, function(df){
-  #       sum(!is.na(df[!(df$VariableResult %in% c('HP','RS','RR','RC','WD','OT')),]$value))
-  #     })
-  #     
-  #   ) %>% dplyr::select(-data) %>%
-  #   tidyr::unnest() %>% as.data.frame %>% tibble::column_to_rownames('id')
- 
-  # I suspect that the metrics were calculated correctly, but were jumbled around.
-  # I re did it to ensure the metrics matched with the correct stations, but still numbers are a little off.
-  #qant <- function(data)quantile(data, c(.5, .1, .25, .75, .9), na.rm=T)
-  #otwd <- which(!(sub$VariableResult %in% c("OT", "WD")))
-  #temp <-tapply(sub$value[otwd], sub$id[otwd], qant)
-  #for(i in 1:length(temp)){
-  #  result$SB_PT_D50.result[i] <- temp[[i]][1]
-  #  result$SB_PT_D10.result[i] <- temp[[i]][2]
-  #  result$SB_PT_D25.result[i] <- temp[[i]][3]
-  #  result$SB_PT_D75.result[i] <- temp[[i]][4]
-  #  result$SB_PT_D90.result[i] <- temp[[i]][5]
-  #}
-  #OTWDHP <- which(!(sub$VariableResult %in% c("OT", "WD", "HP", "RS", "RR", "RC")))
-  #temp2 <-tapply(sub$value[OTWDHP], sub$id[OTWDHP], qant)
-  #for(i in 1:length(temp2)){
-  #  result$SB_PP_D50.result[i] <- temp2[[i]][1]
-  #  result$SB_PP_D10.result[i] <- temp2[[i]][2]
-  #  result$SB_PP_D25.result[i] <- temp2[[i]][3]
-  #  result$SB_PP_D75.result[i] <- temp2[[i]][4]
-  #  result$SB_PP_D90.result[i] <- temp2[[i]][5]
-  #}
   sdna <- function(data) sd(data, na.rm=T)
   embed <- original.data[which((original.data$AnalyteName=="Embeddedness")&
                              (!(original.data$LocationCode=="X"))),]
@@ -478,7 +383,7 @@ substrate <- function(data){
   
   # merge result with the percentile metrics on row names
   result <- merge(result, percentiles, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
-  print("End substrate")
+  
   return(result)
   
 }

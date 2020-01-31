@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' algae(sampdat)
 algae <- function(data){
-  print("Algae")
+  
   data <- data[which(data$AnalyteName %in% c('Microalgae Thickness', 'Macrophyte Cover', 'Macroalgae Cover, Attached', 'Macroalgae Cover, Unattached')),]
   
   lengthna <- function(x){

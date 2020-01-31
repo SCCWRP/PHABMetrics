@@ -10,7 +10,7 @@
 #' sampdat <- phabformat(sampdat)
 #' flow(sampdat)
 flow <- function(data){
-  print("flow")
+
   # This function is used in calculation of FL_Q_F
   calcDistances = function(vector) {
     nreps = length(vector) # number of replicates
@@ -179,7 +179,7 @@ flow <- function(data){
   FlowMetrics$PWVZ.result <- FlowMetrics$PWVZ.result %>% round(1)
   
   result <- FlowMetrics
-  print("End flow")
+  
   return(result)
   
 }

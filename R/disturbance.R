@@ -8,7 +8,7 @@
 #' sampdat <- phabformat(sampdat)
 #' disturbance(sampdat)
 disturbance <- function(data){
-  print("disturbance")
+
   data <- data[which(data$AnalyteName %in% c('Riparian Bridges/Abutments', 'Riparian Buildings', 'Riparian Landfill/Trash', 'Riparian Logging', 'Riparian Mining', 'Riparian Orchards/Vineyards', 'Riparian Park/Lawn', 'Riparian Pasture/Range', 'Riparian Pavement', 'Riparian Pipes', 'Riparian Road', 'Riparian Row Crops', 'Riparian Vegetation Management', 'Riparian Wall/Dike')),]
   ###Set up###
   
