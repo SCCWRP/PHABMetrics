@@ -43,7 +43,7 @@
 #' dim(datprg$data)
 #' 
 chkinp <- function(data, purge = FALSE, msgs = FALSE){
-  print("chkinp")
+  
   msg <- NULL
   prg <- NULL
   
@@ -109,7 +109,7 @@ chkinp <- function(data, purge = FALSE, msgs = FALSE){
       msgs = msg
     )
   out <- as.data.frame(out)
-  print("End chkinp")
+  
   return(out)
   
 }
