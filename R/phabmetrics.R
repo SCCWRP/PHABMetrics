@@ -52,8 +52,9 @@ phabmetrics <- function(data){
     ~ !any(grepl('[a-z,A-Z]', .x)), as.numeric
     )
   
+  
   out <- out %>% 
-    dplyr::inner_join(
+    dplyr::left_join(
       data %>% 
         dplyr::mutate(
           phab_sampleid = dplyr::case_when(
@@ -66,7 +67,8 @@ phabmetrics <- function(data){
         ) %>%
         dplyr::select(
           phab_sampleid, StationCode, SampleDate, SampleAgencyCode
-        )
+        ) %>%
+        dplyr::distinct(phab_sampleid,StationCode,SampleDate,SampleAgencyCode)
       , by = 'phab_sampleid'
     )
   
@@ -76,6 +78,8 @@ phabmetrics <- function(data){
       names(out)[which(!(names(out) %in% c('StationCode','SampleDate','SampleAgencyCode','phab_sampleid')))]
       )
     )
+  
+  out <- longformat(out)
   
   return(out)
   
