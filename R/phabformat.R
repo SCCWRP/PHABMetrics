@@ -11,7 +11,7 @@
 
 
 phabformat <- function(data){
-  print("phabformat")
+  
   # format column classes
   data <- data %>% 
     dplyr::mutate(
@@ -30,14 +30,24 @@ phabformat <- function(data){
       QACode = as.character(QACode)
       )
   
+  
+  
   data$VariableResult[data$ResQualCode=="NR"] <- "Not Recorded"
   data$VariableResult[data$VariableResult=="NR"] <- "Not Recorded"
   data$Result[data$ResQualCode=="NR"] <- NA
   data$Result[data$Result == -88] <- NA
   data <- data %>% 
-    tidyr::unite('id', StationCode, SampleDate, SampleAgencyCode, sep = "|", remove = F) %>% 
+    #tidyr::unite('id', StationCode, SampleDate, SampleAgencyCode, sep = "_", remove = F) %>%
+    dplyr::mutate('id' = dplyr::case_when(
+        toupper(SampleAgencyCode) != 'NOT RECORDED' ~ paste(
+          StationCode, SampleDate, SampleAgencyCode, sep = "_"
+        ),
+        toupper(SampleAgencyCode) == 'NOT RECORDED' ~ paste(StationCode, SampleDate, sep = "_"),
+        TRUE ~ NA_character_
+      )
+    ) %>% 
     data.frame(stringsAsFactors = F)
-  print("end phabformat")
+  
   return(data)
   
 }

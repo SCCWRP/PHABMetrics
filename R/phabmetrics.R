@@ -11,7 +11,13 @@
 #' phabmetrics(sampdat)
 #' }
 phabmetrics <- function(data){
-  print("phabmetrics")
+  if (!("sampleagencycode" %in% tolower(names(data)))){
+    data <- data %>% 
+      dplyr::mutate(
+        SampleAgencyCode = 'Not Recorded'
+      )
+  }
+  
   # format input
   data <- phabformat(data)
   
@@ -30,9 +36,9 @@ phabmetrics <- function(data){
 
     lnfrm <- x %>% 
       as.data.frame(stringsAsFactors = FALSE) %>% 
-      tibble::rownames_to_column('StationCode') %>% 
+      tibble::rownames_to_column('phab_sampleid') %>% 
       dplyr::mutate_if(is.numeric, as.character) %>% 
-      tidyr::gather('var', 'val', -StationCode)
+      tidyr::gather('var', 'val', -phab_sampleid)
     
     return(lnfrm)
     
@@ -46,16 +52,31 @@ phabmetrics <- function(data){
     ~ !any(grepl('[a-z,A-Z]', .x)), as.numeric
     )
   
-  print("out")
-  print(out %>% head())
+  out <- out %>% 
+    dplyr::inner_join(
+      data %>% 
+        dplyr::mutate(
+          phab_sampleid = dplyr::case_when(
+            toupper(SampleAgencyCode) != 'NOT RECORDED' ~ paste(
+              StationCode, SampleDate, SampleAgencyCode, sep = "_"
+            ),
+            toupper(SampleAgencyCode) == 'NOT RECORDED' ~ paste(StationCode, SampleDate, sep = "_"),
+            TRUE ~ NA_character_
+          )
+        ) %>%
+        dplyr::select(
+          phab_sampleid, StationCode, SampleDate, SampleAgencyCode
+        )
+      , by = 'phab_sampleid'
+    )
   
-  #print("out$PCT_DR.sd")
-  #print(out$PCT_DR.sd)
-  #print("out$PCT_CF.sd")
-  #print(out$PCT_CF.sd)
-  #print("out$PCT_GL.sd")
-  #print(out$PCT_GL.sd)
-  print("End phabmetrics")
+  out <- out %>%
+    dplyr::select(
+      c(phab_sampleid,StationCode,SampleDate,SampleAgencyCode,
+      names(out)[which(!(names(out) %in% c('StationCode','SampleDate','SampleAgencyCode','phab_sampleid')))]
+      )
+    )
+  
   return(out)
   
 }
