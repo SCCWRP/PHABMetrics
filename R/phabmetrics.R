@@ -81,6 +81,12 @@ phabmetrics <- function(data){
   
   out <- longformat(out) %>% select(-phab_sampleid)
   
+  if (out %>% dplyr::distinct(SampleAgencyCode) == 'Not Recorded') {
+    out <- out %>%
+      dplyr::select(-SampleAgencyCode)
+  }
+  
+  
   return(out)
   
 }
