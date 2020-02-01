@@ -21,7 +21,9 @@ c('XMIAT_SDSs', 'XMIATP_SDSs', '.', 'AnalyteName', 'LocationCode', 'LocationCode
   # Gloabl Variables for ripveg
   'groundCoverPresence','XPGVEG.count',
   # Global Variables for substrate
-  'aggregate','value','value2','indices','median'
+  'aggregate','value','value2','indices','median',
+  # Global Variables for longformat
+  'phab_sampleid'
 ))
 
 #' @importFrom stats quantile sd aggregate median na.omit

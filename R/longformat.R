@@ -7,37 +7,33 @@
 #' @importFrom magrittr "%>%"
 #' @importFrom dplyr select full_join
 #' @importFrom tidyr gather
+#' @importFrom stats setNames
 #' 
-
-# Input to the function is the wide form of the metrics dataframe
-# hence the argument name metrics
-# this code could easily be appended to the end of phabmetrics.R
-# But I did this for the sake of readability
-longformat <- function(metrics) {
-  metrics.sd <- metrics %>%
+longformat <- function(data) {
+  metrics.sd <- data %>%
     dplyr::select(
       phab_sampleid, StationCode, SampleDate, SampleAgencyCode,
-      which(grepl("\\.sd",names(metrics)))
+      which(grepl("\\.sd",names(data)))
     ) %>%
     dplyr::rename(setNames(names(.),gsub("\\.sd","",names(.)))) %>%
     tidyr::gather(
       key = 'Variable',value = 'sd', -c(phab_sampleid,StationCode,SampleDate,SampleAgencyCode)
     )
   
-  metrics.count <- metrics %>%
+  metrics.count <- data %>%
     dplyr::select(
       phab_sampleid, StationCode, SampleDate, SampleAgencyCode,
-      which(grepl("\\.count",names(metrics)))
+      which(grepl("\\.count",names(data)))
     ) %>% 
     dplyr::rename(setNames(names(.),gsub("\\.count","",names(.)))) %>%
     tidyr::gather(
       key = 'Variable',value = 'Count_Calc', -c(phab_sampleid,StationCode,SampleDate,SampleAgencyCode)
     )
   
-  metrics.result <- metrics %>%
+  metrics.result <- data %>%
     dplyr::select(
       phab_sampleid, StationCode, SampleDate, SampleAgencyCode,
-      which(grepl("\\.result",names(metrics)))
+      which(grepl("\\.result",names(data)))
     ) %>% 
     dplyr::rename(setNames(names(.),gsub("\\.result","",names(.)))) %>%
     tidyr::gather(

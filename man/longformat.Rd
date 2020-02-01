@@ -4,7 +4,7 @@
 \alias{longformat}
 \title{Melt the phabmetrics output dataframe to long format}
 \usage{
-longformat(metrics)
+longformat(data)
 }
 \arguments{
 \item{data}{Input data}
