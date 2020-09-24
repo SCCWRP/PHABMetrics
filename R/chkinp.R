@@ -68,7 +68,7 @@ chkinp <- function(data, purge = FALSE, msgs = FALSE){
       ind, id, LocationCode, AnalyteName, FractionName, VariableResult
     ) %>% 
     dplyr::group_by(id, LocationCode, AnalyteName, FractionName) %>% 
-    dplyr::mutate(n = n()) %>% 
+    dplyr::mutate(n = dplyr::n()) %>% 
     dplyr::ungroup() %>% 
     dplyr::arrange(id, LocationCode, AnalyteName, FractionName) %>% 
     dplyr::mutate(dup = duplicated(cbind(id, LocationCode, AnalyteName, FractionName))) %>% 
