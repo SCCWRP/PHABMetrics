@@ -8,9 +8,20 @@
 #' sampdat <- phabformat(sampdat)
 #' channelsinuosity(sampdat)
 channelsinuosity <- function(data){
-
+  
   data <- data %>%
     dplyr::filter(AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach'))
+  
+  if ((data %>% filter(AnalyteName == 'Elevation Difference' & UnitName != 'cm') %>% nrow) > 0) {
+    stop(
+      'There are records for the analyte Elevation Difference that were not reported in cm. This will cause an inaccurate calculation of XSlope'
+    )
+  }
+  if ((data %>% filter(AnalyteName == 'Length, Segment' & UnitName != 'm') %>% nrow) > 0) {
+    stop(
+      'There are records for the analyte Length, Segment that were not reported in m. This will cause an inaccurate calculation of XSlope'
+    )
+  }
   
   # XSLOPE data ----------------------------------------------------------------------------------
   data_spread <- data %>%
@@ -19,7 +30,7 @@ channelsinuosity <- function(data){
     dplyr::mutate(
       Result = dplyr::case_when(
         AnalyteName == 'Proportion' ~ Result/100, # convert % to proportion
-        AnalyteName == 'Elevation Difference' ~ Result/100,
+        AnalyteName == 'Elevation Difference' ~ Result/100, # convert from cm to m
         TRUE ~ Result
       )
     ) %>% 
@@ -28,25 +39,32 @@ channelsinuosity <- function(data){
     dplyr::mutate(grouped_id = dplyr::row_number()) %>%
     tidyr::spread(AnalyteName, Result)
   
-    if ('Slope' %in% colnames(data_spread)) {
-      data_spread <- data_spread %>%
-        dplyr::mutate(
-          Slope = Slope,
-          p_slope = Slope * Proportion,
-          p_bear = Bearing * Proportion
-        )
-    } else if ('Elevation Difference' %in% colnames(data_spread)) {
-      data_spread <- data_spread %>%
-        dplyr::mutate(
-          Slope = `Elevation Difference`/`Length, Segment` * 100,
-          p_slope = Slope * Proportion,
-          p_bear = Bearing * Proportion
-        )
-    } else {
-      print("Unable to calculate metrics for cahnnelsinuosity. Missing Analytes 'Slope', and/or 'Elevation Difference'")
-      return(data.frame())
-    }
-    
+  if (all(c('Elevation Difference', 'Length, Segment', 'Slope') %in% colnames(data_spread))) {
+    data_spread <- data_spread %>%
+      dplyr::mutate(
+        Slope = ifelse(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope) ,
+        p_slope = Slope * Proportion,
+        p_bear = Bearing * Proportion
+      )
+  } else if (all(c('Elevation Difference','Length, Segment') %in% colnames(data_spread))) {
+    data_spread <- data_spread %>%
+      dplyr::mutate(
+        Slope = `Elevation Difference`/`Length, Segment` * 100,
+        p_slope = Slope * Proportion,
+        p_bear = Bearing * Proportion
+      )
+  } else if ('Slope' %in% colnames(data_spread)) {
+    data_spread <- data_spread %>%
+      dplyr::mutate(
+        # Slope = Slope,
+        p_slope = Slope * Proportion,
+        p_bear = Bearing * Proportion
+      )
+  } else {
+    print("Unable to calculate metrics for channelsinuosity. Missing Analytes 'Slope', and/or 'Elevation Difference'")
+    return(data.frame())
+  }
+  
   ## XSLOPE calculation --------------------------------------------------------------------------
   XSLOPE <- data_spread %>% 
     dplyr::group_by(id, LocationCode) %>%
@@ -57,7 +75,7 @@ channelsinuosity <- function(data){
       XSLOPE.result = mean(p_slope, na.rm = T) %>% round(1),
       XSLOPE.sd = sd(p_slope, na.rm = T) %>% round(2)
     )
-    
+  
   ## SLOPE_pcnt calculation -------------------------------------------------------------------------
   SLOPE_pcnt <- data_spread %>% 
     dplyr::group_by(id) %>% 
@@ -115,6 +133,6 @@ channelsinuosity <- function(data){
     dplyr::inner_join(XBEAR, by = 'id') %>% 
     dplyr::inner_join(SINUS, by = 'id') %>% 
     tibble::column_to_rownames('id')
-
+  
   return(result)
 }
