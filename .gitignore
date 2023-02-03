@@ -1,6 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+scratchwork/
 
 R/test.R
 *.csv
