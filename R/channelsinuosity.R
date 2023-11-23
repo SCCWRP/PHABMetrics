@@ -61,7 +61,7 @@ channelsinuosity <- function(data){
         p_bear = Bearing * Proportion
       )
   } else {
-    print("Unable to calculate metrics for channelsinuosity. Missing Analytes 'Slope', and/or 'Elevation Difference'")
+    stop("Unable to calculate metrics for channelsinuosity. Missing Analytes 'Slope', and/or 'Elevation Difference'")
     return(data.frame())
   }
   
