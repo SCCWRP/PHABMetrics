@@ -34,6 +34,10 @@ channelsinuosity <- function(data){
         TRUE ~ Result
       )
     ) %>% 
+    dplyr::mutate(
+      # Negative slope values were appearing in the PHAB Metrics - take the absolute value.
+      Result = abs(Result)
+    ) %>% 
     dplyr::select(id, LocationCode, AnalyteName, Result, FractionName) %>% 
     dplyr::group_by(id, LocationCode, AnalyteName, FractionName) %>% 
     dplyr::mutate(grouped_id = dplyr::row_number()) %>%
