@@ -12,12 +12,12 @@ channelsinuosity <- function(data){
   data <- data %>%
     dplyr::filter(AnalyteName %in% c('Slope', 'Length, Segment', 'Elevation Difference', 'Bearing', 'Proportion', 'Length, Reach'))
   
-  if ((data %>% filter(AnalyteName == 'Elevation Difference' & UnitName != 'cm') %>% nrow) > 0) {
+  if ((data %>% dplyr::filter(AnalyteName == 'Elevation Difference' & UnitName != 'cm') %>% nrow) > 0) {
     stop(
       'There are records for the analyte Elevation Difference that were not reported in cm. This will cause an inaccurate calculation of XSlope'
     )
   }
-  if ((data %>% filter(AnalyteName == 'Length, Segment' & UnitName != 'm') %>% nrow) > 0) {
+  if ((data %>% dplyr::filter(AnalyteName == 'Length, Segment' & UnitName != 'm') %>% nrow) > 0) {
     stop(
       'There are records for the analyte Length, Segment that were not reported in m. This will cause an inaccurate calculation of XSlope'
     )
@@ -76,7 +76,7 @@ channelsinuosity <- function(data){
     dplyr::group_by(id) %>% 
     dplyr::summarize(
       XSLOPE.count = length(na.omit(p_slope)),
-      XSLOPE.result = mean(p_slope, na.rm = T) %>% round(1) %>% base::abs,
+      XSLOPE.result = mean(p_slope, na.rm = T) %>% round(1) %>% abs(),
       XSLOPE.sd = sd(p_slope, na.rm = T) %>% round(2)
     )
   
