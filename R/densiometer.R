@@ -29,6 +29,7 @@ densiometer <- function(data){
   XCDENBK_data <- data.frame(cbind(data$id[a], (data$Result[a])))
   colnames(XCDENBK_data) <- c("id", "Result")
   transform <- function(data) as.numeric(as.character(data))*(100/17)
+  XCDENBK_data$trans <- 1:length(XCDENBK_data$Result)
   XCDENBK_data$trans <- (transform(XCDENBK_data$Result))
   sumna <- function(data)sum(data, na.rm = T)
   XCDENBK_sum <- tapply(XCDENBK_data$trans, XCDENBK_data$id, sumna)
