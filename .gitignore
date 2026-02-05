@@ -3,6 +3,5 @@
 .RData
 scratchwork/
 
-R/test.R
 *.csv
 data

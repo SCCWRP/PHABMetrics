@@ -76,6 +76,24 @@ bankmorph <- function(data){
   XWDEPTH.result <- round(XWDEPTH_sum/XWDEPTH.count, 1)
   XWDEPTH.sd <- round(tapply(as.numeric(as.character(XWDEPTHdata$result)), XWDEPTHdata$id, sdna), 2)
   
+    XWDEPTH_tmp = data |>
+    dplyr::filter(
+      AnalyteName == 'StationWaterDepth',
+      MethodName == 'FieldMeasure'
+    ) |>
+    dplyr::select(
+      id, result = Result
+    ) |>
+    dplyr::group_by(id) |>
+    dplyr::summarize(
+      sum = sumna(result),
+      count = lengthna(result),
+      sd = sdna(result)
+    ) |>
+    dplyr::mutate(
+      result = sum / count
+    )
+
   ###XWIDTH###
   
   XWIDTHdata <- data %>%
@@ -84,28 +102,43 @@ bankmorph <- function(data){
       MethodName == 'FieldMeasure'
     ) %>%
     dplyr::select(
-      id, Result
+      id,
+      result = Result
     )
-  # Just because I don't know how many other times he references the column 'result' with lowercase r in the script
-  # This below line was in the code before
-  colnames(XWIDTHdata) <- c("id", "result")
   
-  XWIDTH_sum <- tapply(XWIDTHdata$result, XWIDTHdata$id, sumna)
+  XWIDTH_tmp = XWIDTHdata |>
+    dplyr::group_by(id) |>
+    dplyr::summarize(
+      sum = sum(result, na.rm=TRUE),
+      count = lengthna(result)
+    ) |>
+    dplyr::mutate(
+      result = round(sum/count, 1)
+    )
+
+  XWIDTH_sum = tapply(XWIDTHdata$result, XWIDTHdata$id, sumna)
   XWIDTH.count <- tapply(XWIDTHdata$result, XWIDTHdata$id, lengthna)
+
   XWIDTH.result <- round(XWIDTH_sum/XWIDTH.count, 1)
   
-  # print("XWIDTHdata")
-  # print(XWIDTHdata %>% dplyr::filter(grepl('404M07362',id)))
   XWIDTH.sd <- tapply(as.numeric(as.character(XWIDTHdata$result)), XWIDTHdata$id, sdna) %>% round(2)
-  # print("XWIDTH.sd")
-  # print(XWIDTH.sd)
-  ###XWDR###
   
-  XWDR.result <- (XWIDTH.result/XWDEPTH.result)*100
+  ratio_tmp = dplyr::inner_join(
+      XWIDTH_tmp,
+      XWDEPTH_tmp,
+      by=dplyr::join_by(id),
+      suffix=c('.width', '.depth')
+    ) |>
+    dplyr::mutate(
+      wdratio = result.width / result.depth,
+      dwratio = result.depth / result.width
+    )
+  XWDR.result = ratio_tmp |> dplyr::select(wdratio)
+  
   XWDR.count<- XWIDTH.count
   ###XWDA###
   
-  XWDA.result <- XWDEPTH.result/(XWIDTH.result*10)
+  XWDA.result = ratio_tmp |> dplyr::select(dwratio)
   XWDA.count <- XWDEPTH.count
   ###XWDM###
 
