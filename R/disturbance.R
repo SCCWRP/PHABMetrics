@@ -8,7 +8,6 @@
 #' sampdat <- phabformat(sampdat)
 #' disturbance(sampdat)
 disturbance <- function(data) {
-
   # Check if we have any relevant analytes
   analytes_present_logical = data$AnalyteName %in%
     c(
@@ -56,6 +55,7 @@ disturbance <- function(data) {
     "AnalyteName",
     "VariableResult"
   )
+
   reformed$VariableResult <- as.character(reformed$VariableResult)
   reformed <- reformed %>%
     dplyr::group_by(id, AnalyteName, Trans) %>%
