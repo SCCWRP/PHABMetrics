@@ -8,28 +8,34 @@
 #' sampdat <- phabformat(sampdat)
 #' disturbance(sampdat)
 disturbance <- function(data) {
-  print(data$AnalyteName)
+
+  # Check if we have any relevant analytes
+  analytes_present_logical = data$AnalyteName %in%
+    c(
+      'Riparian Bridges/Abutments',
+      'Riparian Buildings',
+      'Riparian Landfill/Trash',
+      'Riparian Logging',
+      'Riparian Mining',
+      'Riparian Orchards/Vineyards',
+      'Riparian Park/Lawn',
+      'Riparian Pasture/Range',
+      'Riparian Pavement',
+      'Riparian Pipes',
+      'Riparian Road',
+      'Riparian Row Crops',
+      'Riparian Vegetation Management',
+      'Riparian Wall/Dike'
+    )
+  if (all(!analytes_present_logical)) {
+    print("Disturbance: no relevant analytes present")
+    return
+  }
+
   data <- data[
-    which(
-      data$AnalyteName %in%
-        c(
-          'Riparian Bridges/Abutments',
-          'Riparian Buildings',
-          'Riparian Landfill/Trash',
-          'Riparian Logging',
-          'Riparian Mining',
-          'Riparian Orchards/Vineyards',
-          'Riparian Park/Lawn',
-          'Riparian Pasture/Range',
-          'Riparian Pavement',
-          'Riparian Pipes',
-          'Riparian Road',
-          'Riparian Row Crops',
-          'Riparian Vegetation Management',
-          'Riparian Wall/Dike'
-        )
-    ),
+    which(analytes_present_logical),
   ]
+
   ###Set up###
 
   data2 <- gsub("(Block|Channel)(\\w)", "\\2", data$LocationCode)
