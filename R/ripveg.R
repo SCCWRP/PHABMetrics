@@ -340,9 +340,6 @@ ripveg <- function(data) {
     fun.aggregate = 'length'
   ))
 
-  for (i in 3:7) {
-    aframe[[i]] <- as.numeric(as.character(aframe[[i]]))
-  }
   aframe[is.na(aframe)] <- (-1)
   aframe[aframe == "Not Recorded"] <- (-1)
   aframe$XPCM <- rep(NA, length(aframe$id))
