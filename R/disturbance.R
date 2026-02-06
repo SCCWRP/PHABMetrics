@@ -80,7 +80,7 @@ disturbance <- function(data) {
         } else {
           # get channel y/n
           chn <- x %>%
-            dplyr::filter(x$Location == 'Channel') %>%
+            dplyr::filter(grepl('Channel', x$Location)) %>%
             dplyr::pull(VariableResult) %>%
             as.character
 
