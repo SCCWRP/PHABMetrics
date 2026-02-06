@@ -345,15 +345,20 @@ ripveg <- function(data) {
   aframe$XPCM <- rep(NA, length(aframe$id))
   for (i in which(!is.na(aframe[[3]]))) {
     aframe$XPCM[i] <- if (
+      !("Riparian Upper Canopy All Trees" %in% colnames(aframe)) ||
+        !("Riparian Lower Canopy All Vegetation" %in% colnames(aframe))
+    ) {
+      NA
+    } else if (
       (aframe$"Riparian Upper Canopy All Trees"[i] > 0) &
         (aframe$"Riparian Lower Canopy All Vegetation"[i] > 0)
     ) {
-      T
+      TRUE
     } else if (
       (aframe$"Riparian Upper Canopy All Trees"[i] == 0) |
         (aframe$"Riparian Lower Canopy All Vegetation"[i] == 0)
     ) {
-      F
+      FALSE
     } else {
       NA
     }
