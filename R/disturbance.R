@@ -203,10 +203,7 @@ disturbance <- function(data) {
   )
 
   for (i in 1:length(statname)) {
-<<<<<<< HEAD
     # Skip metric if relevant analyte not present
-=======
->>>>>>> 70eda29 (Auto-format disturbance.R)
     tryCatch(
       expr = {
         metric <- as.character(statname[i])
