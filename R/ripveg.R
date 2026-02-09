@@ -332,42 +332,7 @@ ripveg <- function(data) {
     as.data.frame %>%
     tibble::column_to_rownames('id')
 
-  ###XPCM###
-  aframe <- as.data.frame(reshape::cast(
-    data,
-    id + LocationCode ~ AnalyteName,
-    value = "VariableResult",
-    fun.aggregate = 'length'
-  ))
-
-  for (i in 3:7) {
-    aframe[[i]] <- as.numeric(as.character(aframe[[i]]))
-  }
-  aframe[is.na(aframe)] <- (-1)
-  aframe[aframe == "Not Recorded"] <- (-1)
-  aframe$XPCM <- rep(NA, length(aframe$id))
-  for (i in which(!is.na(aframe[[3]]))) {
-    aframe$XPCM[i] <- if (
-      (aframe$"Riparian Upper Canopy All Trees"[i] > 0) &
-        (aframe$"Riparian Lower Canopy All Vegetation"[i] > 0)
-    ) {
-      T
-    } else if (
-      (aframe$"Riparian Upper Canopy All Trees"[i] == 0) |
-        (aframe$"Riparian Lower Canopy All Vegetation"[i] == 0)
-    ) {
-      F
-    } else {
-      NA
-    }
-  }
-  aframe$"Riparian Upper Canopy All Trees"[which(
-    aframe$"Riparian Upper Canopy All Trees" == -1
-  )] <- NA
-  XPCM.result <- tapply(aframe$XPCM, aframe$id, sumna) /
-    tapply(aframe$XPCM, aframe$id, lengthna)
-
-  ### XPCMG and XPMGVEG ###
+  ### XPCM, XPCMG, and XPMGVEG ###
   XPCM_XPCMG_XPMGVEG <- data %>%
     tidyr::spread(key = AnalyteName, value = VariableResult) %>%
     dplyr::select(
