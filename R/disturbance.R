@@ -203,21 +203,15 @@ disturbance <- function(data) {
   )
 
   for (i in 1:length(statname)) {
+    metric <- as.character(statname[i])
+    tmp <- reformed[which(grepl(metric, reformed$Metric)), ]
     # Skip metric if relevant analyte not present
-    tryCatch(
-      expr = {
-        metric <- as.character(statname[i])
-        tmp <- reformed[which(grepl(metric, reformed$Metric)), ]
-        rownames(result) <- tmp$id
-        result[, paste(metric, '.result', sep = '')] <- round(tmp$Result, 2)
-        result[, paste(metric, '.count', sep = '')] <- tmp$Count
-        result[, paste(metric, '.sd', sep = '')] <- round(tmp$sd, 3)
-      },
-      error = function(e) {
-        print(paste("Error with metric", metric))
-        print(e)
-      }
-    )
+    if (nrow(tmp) > 0) {
+      rownames(result) <- tmp$id
+      result[, paste(metric, '.result', sep = '')] <- round(tmp$Result, 2)
+      result[, paste(metric, '.count', sep = '')] <- tmp$Count
+      result[, paste(metric, '.sd', sep = '')] <- round(tmp$sd, 3)
+    }
   }
 
   #result <- result %>% dplyr::mutate_at(dplyr::vars(dplyr::contains(".sd")),round, digits = 3)
