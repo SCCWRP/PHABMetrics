@@ -336,16 +336,18 @@ ripveg <- function(data) {
   XPCM_XPCMG_XPMGVEG <- data %>%
     tidyr::spread(key = AnalyteName, value = VariableResult) %>%
     dplyr::select(
-      -c(
-        UnitName,
-        FractionName,
-        ResQualCode,
-        QACode,
-        StationCode,
-        SampleDate,
-        Result,
-        Replicate,
-        'Riparian GroundCover Barren'
+      -dplyr::any_of(
+        c(
+          'UnitName',
+          'FractionName',
+          'ResQualCode',
+          'QACode',
+          'StationCode',
+          'SampleDate',
+          'Result',
+          'Replicate',
+          'Riparian GroundCover Barren'
+        )
       )
     ) %>%
     dplyr::group_by(id) %>%
