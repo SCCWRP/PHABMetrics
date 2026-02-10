@@ -26,7 +26,7 @@ algae <- function(data){
     x <- {1:length(data)}
     present_calculation <- function(number){
       for(i in 1:length(data)){
-        if(data[i] == number ){
+        if(is.numeric(data[i]) && data[i] == number){
           x[i] <- 1
         }else{
           x[i] <- 0
@@ -40,7 +40,7 @@ algae <- function(data){
     
     total_calculation <- function(number){
       for(i in 1:length(data)){
-        if(data[i] == number ){
+        if(is.numeric(data[i]) && data[i] == number){
           x[i] <- 1
         }else{
           x[i] <- 0
@@ -54,6 +54,7 @@ algae <- function(data){
     result <- round((present/total)*100)
     return(result)
   }
+  
   PCT_MIATP.result <- round(tapply(microalgae$VariableResult, microalgae$id, FUN_PCT_MIATP))
   PCT_MIATP.count <- tapply(microalgae$VariableResult, microalgae$id, function(x){
     return(sum(x %in% c('0','1','2','3','4','5')))
@@ -66,7 +67,7 @@ algae <- function(data){
     x <- {1:length(data)}
     present_calculation <- function(number){
       for(i in 1:length(data)){
-        if(data[i] == number ){
+        if(is.numeric(data[i]) && data[i] == number){
           x[i] <- 1
         }else{
           x[i] <- 0
@@ -80,7 +81,7 @@ algae <- function(data){
     
     total_calculation <- function(number){
       for(i in 1:length(data)){
-        if(data[i] == number ){
+        if(is.numeric(data[i]) && data[i] == number){
           x[i] <- 1
         }else{
           x[i] <- 0
@@ -106,7 +107,7 @@ algae <- function(data){
     x <- {1:length(data)}
     present_calculation <- function(number){
       for(i in 1:length(data)){
-        if(data[i] == number ){
+        if(is.numeric(data[i]) && data[i] == number){
           x[i] <- 1
         }else{
           x[i] <- 0
@@ -120,7 +121,7 @@ algae <- function(data){
     
     total_calculation <- function(number){
       for(i in 1:length(data)){
-        if(data[i] == number ){
+        if(is.numeric(data[i]) && data[i] == number){
           x[i] <- 1
         }else{
           x[i] <- 0
