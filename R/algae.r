@@ -344,7 +344,19 @@ algae <- function(data){
   algae_results1 <- cbind(PCT_MIATP.result, PCT_MIAT1.result, PCT_MIAT1P.result, PCT_MAA.result, PCT_MCP.result,
                           PCT_MAU.result, PCT_MAA.count, PCT_MAU.count, PCT_MCP.count, 
                           PCT_MIAT1.count, PCT_MIAT1P.count, PCT_MIATP.count)
-  algae_results_final <- cbind(XMIAT, XMIATP, algae_results1)
+
+  # 1. Convert row names to an actual column so we can join on them
+  df1 <- as.data.frame(XMIAT) %>% tibble::rownames_to_column("ID")
+  df2 <- as.data.frame(XMIATP) %>% tibble::rownames_to_column("ID")
+  df3 <- as.data.frame(algae_results1) %>% tibble::rownames_to_column("ID")
+
+  # 2. Join them all together
+  algae_results_final <- df1 %>%
+    dplyr::full_join(df2, by = "ID") %>%
+    dplyr::full_join(df3, by = "ID")
+
+  # algae_results_final <- cbind(XMIAT, XMIATP, algae_results1)
+  print(algae_results_final)
   
   algae_results_final <- merge(algae_results_final, PCT_MAP, by = 'row.names') %>%
     as.data.frame %>%
