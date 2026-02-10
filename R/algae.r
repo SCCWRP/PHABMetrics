@@ -469,17 +469,11 @@ algae <- function(data) {
     dplyr::full_join(df3, by = "ID")
 
   # algae_results_final <- cbind(XMIAT, XMIATP, algae_results1)
-  print(algae_results_final)
+  algae_results_final <- dplyr::full_join(
+    algae_results_final |> dplyr::as_tibble(rownames=NA),
+    PCT_MAP |> tibble::rownames_to_column(var="ID") |> dplyr::as_tibble(),
+    by="ID"
+  )
 
-  algae_results_final <- merge(
-    algae_results_final,
-    PCT_MAP,
-    by = 'row.names'
-  ) %>%
-    as.data.frame %>%
-    tibble::column_to_rownames('Row.names') %>%
-    merge(PCT_NSA, by = 'row.names') %>%
-    tibble::column_to_rownames('Row.names')
-
-  return(algae_results_final)
+  return(algae_results_final |> as.data.frame())
 }
