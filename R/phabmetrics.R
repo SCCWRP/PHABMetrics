@@ -32,8 +32,6 @@ phabmetrics <- function(data, output_errors = FALSE) {
   # We should probably let the checker application check the data so users (and us) are aware of any problems with their data
   data <- chkinp(data, purge = TRUE)
 
-  bankmorph_metrics = bankmorph(data)
-
   metrics_functions = list(
     bankmorph = bankmorph,
     channelmorph = channelmorph,
