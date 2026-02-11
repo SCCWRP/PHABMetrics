@@ -10,7 +10,14 @@
 #' \dontrun{
 #' phabmetrics(sampdat)
 #' }
-phabmetrics <- function(data) {
+phabmetrics <- function(data, output_errors = FALSE) {
+  metrics = list()
+  err_log = data.frame(
+    func = character(),
+    msg = character(),
+    stringsAsFactors = FALSE
+  )
+
   if (!("sampleagencycode" %in% tolower(names(data)))) {
     data <- data %>%
       dplyr::mutate(
@@ -25,33 +32,53 @@ phabmetrics <- function(data) {
   # We should probably let the checker application check the data so users (and us) are aware of any problems with their data
   data <- chkinp(data, purge = TRUE)
 
-  # calc metrics
-  metrics <- list(
-    bankmorph(data),
-    channelmorph(data),
-    channelsinuosity(data),
-    densiometer(data),
-    habitat(data),
-    disturbance(data),
-    flow(data),
-    misc(data),
-    bankstability(data),
-    quality(data),
-    ripveg(data),
-    substrate(data),
-    algae(data)
+  bankmorph_metrics = bankmorph(data)
+
+  metrics_functions = list(
+    bankmorph = bankmorph,
+    channelmorph = channelmorph,
+    channelsinuosity = channelsinuosity,
+    densiometer = densiometer,
+    habitat = habitat,
+    disturbance = disturbance,
+    flow = flow,
+    misc = misc,
+    bankstability = bankstability,
+    quality = quality,
+    ripveg = ripveg,
+    substrate = substrate,
+    algae = algae
   )
 
-  # combine seprate metrics lists
-  out <- purrr::map(metrics, function(x) {
-    lnfrm <- x %>%
-      as.data.frame(stringsAsFactors = FALSE) %>%
-      tibble::rownames_to_column('phab_sampleid') %>%
-      dplyr::mutate_if(is.numeric, as.character) %>%
-      tidyr::gather('var', 'val', -phab_sampleid)
+  for (f_name in names(metrics_functions)) {
+    res = tryCatch(
+      {
+        metrics_functions[[f_name]](data)
+      },
+      error = function(e) {
+        # Capture the error and return a specific indicator
+        err_log <<- rbind(err_log, data.frame(func = f_name, msg = e$message))
+        return(NULL)
+      }
+    )
 
-    return(lnfrm)
-  }) %>%
+    if (!is.null(res)) {
+      metrics[[f_name]] <- res
+    }
+  }
+
+  # combine seprate metrics lists
+  out <- metrics |>
+    purrr::compact() |>
+    purrr::map(function(x) {
+      lnfrm <- x %>%
+        as.data.frame(stringsAsFactors = FALSE) %>%
+        tibble::rownames_to_column('phab_sampleid') %>%
+        dplyr::mutate_if(is.numeric, as.character) %>%
+        tidyr::gather('var', 'val', -phab_sampleid)
+
+      return(lnfrm)
+    }) %>%
     do.call('rbind', .) %>%
     dplyr::mutate(
       val = gsub('NaN', NA, val)
@@ -117,5 +144,13 @@ phabmetrics <- function(data) {
       dplyr::select(-SampleAgencyCode)
   }
 
-  return(out)
+  if (output_errors) {
+    # Return the named list structure
+    return(list(
+      out = out,
+      errors = err_log
+    ))
+  } else {
+    return(out)
+  }
 }
