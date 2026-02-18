@@ -1,6 +1,7 @@
 #' Calculate all PHAB metrics
 #'
-#' @param data Input data
+#' @param data Input data for phab metrics
+#' @param output_errors Output a named list; "out" is the original output, "errors" is individual errors for each subfunction
 #'
 #' @export
 #'
@@ -10,7 +11,6 @@
 #' \dontrun{
 #' phabmetrics(sampdat)
 #' }
-phabmetrics <- function(data, output_errors = FALSE) {
   metrics = list()
   err_log = data.frame(
     func = character(),
