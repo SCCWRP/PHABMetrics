@@ -2,6 +2,7 @@
 #'
 #' @param data Input data for phab metrics
 #' @param output_errors Output a named list; "out" is the original output, "errors" is individual errors for each subfunction
+#' @param one_fails_all On TRUE, don't output analysis if any subfunctions fail
 #'
 #' @export
 #'
@@ -11,6 +12,7 @@
 #' \dontrun{
 #' phabmetrics(sampdat)
 #' }
+phabmetrics <- function(data, output_errors = FALSE, one_fails_all = TRUE) {
   metrics = list()
   err_log = data.frame(
     func = character(),
