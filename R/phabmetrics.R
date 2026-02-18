@@ -144,12 +144,19 @@ phabmetrics <- function(data, output_errors = FALSE, one_fails_all = TRUE) {
       dplyr::select(-SampleAgencyCode)
   }
 
-  if (output_errors) {
+  if (output_errors && !one_fails_all) {
     # Return the named list structure
     return(list(
       out = out,
       errors = err_log
     ))
+  } else if (output_errors && one_fails_all && length(err_log) > 0) {
+    return(list(
+      out = NULL,
+      errors = err_log
+    ))
+  } else if (!output_errors && one_fails_all && length(err_log) > 0) {
+    return(NULL)
   } else {
     return(out)
   }
