@@ -62,6 +62,10 @@ phabmetrics <- function(data, output_errors = FALSE, one_fails_all = TRUE) {
       }
     )
 
+    if (!output_errors && one_fails_all && nrow(err_log) > 0) {
+      stop(err_log$msg)
+    }
+
     if (!is.null(res)) {
       metrics[[f_name]] <- res
     }
@@ -150,12 +154,12 @@ phabmetrics <- function(data, output_errors = FALSE, one_fails_all = TRUE) {
       out = out,
       errors = err_log
     ))
-  } else if (output_errors && one_fails_all && length(err_log) > 0) {
+  } else if (output_errors && one_fails_all && nrow(err_log) > 0) {
     return(list(
       out = NULL,
       errors = err_log
     ))
-  } else if (!output_errors && one_fails_all && length(err_log) > 0) {
+  } else if (!output_errors && one_fails_all && nrow(err_log) > 0) {
     return(NULL)
   } else {
     return(out)
