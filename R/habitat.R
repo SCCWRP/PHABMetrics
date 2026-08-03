@@ -151,11 +151,29 @@ habitat <- function(data){
     ) %>% 
     dplyr::select(-data) %>% 
     tidyr::unnest() %>% 
-    as.data.frame(stringsAsFactors = F) %>% 
+    as.data.frame(stringsAsFactors = F) %>%
     tibble::column_to_rownames('id')
+
+  # H_AqHab_mod1: same as H_AqHab but normalized against the theoretical
+  # maximum cover (87.5 per measurement) instead of the observed cover total
+  AqHab_mod1 <- data %>% dplyr::select(id, AnalyteName, convert) %>%
+    tidyr::unnest() %>% dplyr::group_by(id) %>% tidyr::nest() %>%
+    dplyr::mutate(H_AqHab.result = purrr::map(data, function(data) {
+      sms <- data %>% dplyr::group_by(AnalyteName) %>%
+        dplyr::summarise(convert = sumna(convert)) %>%
+        dplyr::filter(AnalyteName != "Fish Cover Artificial Structures")
+      smgrz <- (87.5 * data %>% dplyr::filter(AnalyteName != "Fish Cover Artificial Structures") %>%  nrow()) ### number of measures * 87.5
+      smspi <- sms$convert/smgrz
+      smspimlt <- smspi * log(smspi)
+      res <- sum(smspimlt, na.rm = T) * -1
+      return(res)
+    })) %>% dplyr::select(-data) %>%
+    tidyr::unnest() %>% as.data.frame(stringsAsFactors = F) %>%
+    tibble::column_to_rownames("id")
 
   # add H_AqHab, Ev_AqHab to results
   result$H_AqHab.result <- round(AqHab$H_AqHab.result, 2)
+  result$H_AqHab_mod1.result <- round(AqHab_mod1$H_AqHab.result, 2)
   result$H_AqHab.count <- AqHab$H_AqHab.count
   result$Ev_AqHab.result <- round(AqHab$Ev_AqHab.result, 2)
   result$Ev_AqHab.count <- AqHab$Ev_AqHab.count
@@ -207,6 +225,13 @@ habitat <- function(data){
   tibble:: column_to_rownames('id')
 
   result <- merge(result, counts, by='row.names') %>% tibble::column_to_rownames('Row.names')
+
+  ###Rich_AqHab###
+
+  aqhab_cols <- c("XFC_AQM.result", "XFC_RCK.result", "XFC_ALG.result", "XFC_LWD.result",
+                  "XFC_LTR.result", "XFC_OHV.result", "XFC_BRS.result", "XFC_UCB.result")
+  result$Rich_AqHab.result <- rowSums(result[, aqhab_cols] > 0, na.rm = T)
+  result$Rich_AqHab.count <- result$CFC_UCB.count
 
   return(result)
   

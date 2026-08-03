@@ -93,7 +93,17 @@ channelmorph <- function(data){
   
   PCT_SLOW.result <- round(PCT_GL.result + PCT_POOL.result)
   PCT_SLOW.count <- rowSums(!is.na(cbind(PCT_GL.result, PCT_POOL.result)))
-  
+
+  ###Rich_FlowHab###
+
+  Rich_FlowHab.result <- rowSums(cbind(PCT_CF.result, PCT_GL.result, PCT_POOL.result, PCT_RA.result, PCT_RI.result, PCT_RN.result) > 0, na.rm = T)
+  Rich_FlowHab.count <- PCT_CF.count
+
+  ###Rich_FlowHab4###
+
+  Rich_FlowHab4.result <- rowSums(cbind(PCT_GL.result, PCT_POOL.result, PCT_RI.result, PCT_RN.result) > 0, na.rm = T)
+  Rich_FlowHab4.count <- PCT_CF.count
+
   ###PCT_CF_WT###
   
   PCT_CF_WT1 <- (PCT_CF_sum + PCT_RA_sum + PCT_RI_sum + PCT_RN_sum + PCT_GL_sum + PCT_POOL_sum)/100
@@ -157,8 +167,9 @@ channelmorph <- function(data){
                    PCT_RA.sd, PCT_RI.result, PCT_RI.count, PCT_RI.sd, PCT_RN.result, PCT_RN.count, PCT_RN.sd,
                    PCT_FAST.result, PCT_SLOW.result, PCT_CF_WT.result, PCT_CF_WT.count, PCT_GL_WT.result, PCT_GL_WT.count,
                    PCT_POOL_WT.result, PCT_POOL_WT.count, PCT_RA_WT.result, PCT_RA_WT.count, PCT_RI_WT.result, 
-                   PCT_RI_WT.count, PCT_RN_WT.result, PCT_RN_WT.count, PCT_FAST_WT.result, PCT_SLOW_WT.result, PCT_FAST.count, 
-                   PCT_SLOW.count, PCT_FAST_WT.count, PCT_SLOW_WT.count)
+                   PCT_RI_WT.count, PCT_RN_WT.result, PCT_RN_WT.count, PCT_FAST_WT.result, PCT_SLOW_WT.result, PCT_FAST.count,
+                   PCT_SLOW.count, PCT_FAST_WT.count, PCT_SLOW_WT.count, Rich_FlowHab.result, Rich_FlowHab.count,
+                   Rich_FlowHab4.result, Rich_FlowHab4.count)
   
 
   
