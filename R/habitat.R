@@ -228,7 +228,7 @@ habitat <- function(data){
 
   ###Rich_AqHab###
 
-  aqhab_cols <- c("XFC_AQM.result", "XFC_RCK.result", "XFC_ALG.result", "XFC_LWD.result",
+  aqhab_cols <- c("XFC_AQM.result", "XFC_RCK.result", "XFC_LWD.result",
                   "XFC_LTR.result", "XFC_OHV.result", "XFC_BRS.result", "XFC_UCB.result")
   result$Rich_AqHab.result <- rowSums(result[, aqhab_cols] > 0, na.rm = T)
   result$Rich_AqHab.count <- result$CFC_UCB.count

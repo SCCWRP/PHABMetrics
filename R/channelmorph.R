@@ -96,12 +96,12 @@ channelmorph <- function(data){
 
   ###Rich_FlowHab###
 
-  Rich_FlowHab.result <- rowSums(cbind(PCT_CF.result, PCT_GL.result, PCT_POOL.result, PCT_RA.result, PCT_RI.result, PCT_RN.result) > 0, na.rm = T)
+  Rich_FlowHab.result <- rowSums(cbind(PCT_CF_sum, PCT_GL_sum, PCT_POOL_sum, PCT_RA_sum, PCT_RI_sum, PCT_RN_sum) > 0, na.rm = T)
   Rich_FlowHab.count <- PCT_CF.count
 
   ###Rich_FlowHab4###
 
-  Rich_FlowHab4.result <- rowSums(cbind(PCT_GL.result, PCT_POOL.result, PCT_RI.result, PCT_RN.result) > 0, na.rm = T)
+  Rich_FlowHab4.result <- rowSums(cbind(PCT_GL_sum, PCT_POOL_sum, PCT_RI_sum, PCT_RN_sum) > 0, na.rm = T)
   Rich_FlowHab4.count <- PCT_CF.count
 
   ###PCT_CF_WT###
