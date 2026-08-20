@@ -56,6 +56,45 @@ test_that('SINU is NA, not Inf, when a reach has no usable bearings', {
   expect_equal(cs[setdiff(rownames(cs), hit), 'SINU.result'], c(1.06, 1.13, 1.07))
 })
 
+test_that('SLOPE_0 / SLOPE_0_5 / SLOPE_1 / SLOPE_2 are NA when no slope was measured', {
+
+  # With no usable slopes, `Length, Segment`[slope_x] is all NA and
+  # sum(na.rm = TRUE) is 0, so these used to report 0 -- "0% of reach length at
+  # or below this slope" -- for reaches where gradient was never recorded.
+  # sampdat records Slope at two sites and Elevation Difference at the other
+  # two, so dropping Slope leaves sites 2 and 3 with no gradient source.
+  raw <- PHABMetrics::sampdat
+  raw <- raw[!(raw$AnalyteName %in% 'Slope'), ]
+
+  cs <- suppressWarnings(channelsinuosity(phabformat(raw)))
+  gone <- c('205PS0202_2013-07-17_MPSL-DFW', '308PS0204_2013-05-21_DFW-ABL')
+  kept <- setdiff(rownames(cs), gone)
+
+  for (m in c('SLOPE_0.result','SLOPE_0_5.result','SLOPE_1.result','SLOPE_2.result')) {
+    expect_true(all(is.na(cs[gone, m])), info = m)
+    expect_equal(cs[gone, paste0(sub('\\.result$', '', m), '.count')], c(0, 0), info = m)
+  }
+
+  # reaches that still have a gradient source keep their values
+  expect_equal(cs[kept, 'SLOPE_0_5.result'], c(100, 60))
+  expect_equal(cs[kept, 'SLOPE_2.result'],   c(100, 90))
+})
+
+test_that('a measured slope percentage of 0 stays 0 and does not become NA', {
+
+  # The guard must distinguish "measured, none qualify" from "never measured".
+  # On complete sampdat, SLOPE_0 is a real 0 everywhere and 308PS0204 has a
+  # real 0 for SLOPE_0_5.
+  cs <- suppressWarnings(channelsinuosity(phabformat(PHABMetrics::sampdat)))
+
+  expect_equal(as.vector(cs$SLOPE_0.result), c(0, 0, 0, 0))
+  expect_false(any(is.na(cs$SLOPE_0.result)))
+  expect_equal(cs['308PS0204_2013-05-21_DFW-ABL', 'SLOPE_0_5.result'], 0)
+  expect_equal(as.vector(cs$SLOPE_0_5.result), c(100, 20, 0, 60))
+  expect_equal(as.vector(cs$SLOPE_1.result),   c(100, 60, 40, 70))
+  expect_equal(as.vector(cs$SLOPE_2.result),   c(100, 90, 70, 90))
+})
+
 test_that('XBEARING is NA, not 0, when a reach has no usable bearings', {
 
   # sum(p_bear, na.rm = TRUE) over an all-NA reach is 0, which used to be

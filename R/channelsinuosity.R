@@ -89,10 +89,32 @@ channelsinuosity <- function(data){
       SLOPE_0_5.count = sum(!is.na(slope_0_5)),
       SLOPE_1.count = sum(!is.na(slope_1)),
       SLOPE_2.count = sum(!is.na(slope_2)),
-      SLOPE_0.result = sum(`Length, Segment`[slope_0], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
-      SLOPE_0_5.result = sum(`Length, Segment`[slope_0_5], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
-      SLOPE_1.result = sum(`Length, Segment`[slope_1], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
-      SLOPE_2.result = sum(`Length, Segment`[slope_2], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100
+      # With no usable slopes, `Length, Segment`[slope_x] is all NA and
+      # sum(na.rm = TRUE) is 0, so these reported "0% of reach length at or
+      # below this slope" -- a real claim -- for a reach where gradient was
+      # never measured. The .count fields already report 0 in that case, so
+      # guard on them: no slopes measured means undefined, not zero. Matches
+      # the SINU / XBEARING guards.
+      SLOPE_0.result = ifelse(
+        SLOPE_0.count > 0 & sum(`Length, Segment`, na.rm = T) > 0,
+        sum(`Length, Segment`[slope_0], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
+        NA_real_
+      ),
+      SLOPE_0_5.result = ifelse(
+        SLOPE_0_5.count > 0 & sum(`Length, Segment`, na.rm = T) > 0,
+        sum(`Length, Segment`[slope_0_5], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
+        NA_real_
+      ),
+      SLOPE_1.result = ifelse(
+        SLOPE_1.count > 0 & sum(`Length, Segment`, na.rm = T) > 0,
+        sum(`Length, Segment`[slope_1], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
+        NA_real_
+      ),
+      SLOPE_2.result = ifelse(
+        SLOPE_2.count > 0 & sum(`Length, Segment`, na.rm = T) > 0,
+        sum(`Length, Segment`[slope_2], na.rm = T)/sum(`Length, Segment`, na.rm = T) * 100,
+        NA_real_
+      )
     )
   
   # XBEAR -------------------------------------------------------------------------------------
