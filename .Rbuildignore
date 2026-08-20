@@ -6,3 +6,4 @@ README*
 R/all_phab_functions.r
 R/test.R
 ^codecov\.yml$
+^tools/
