@@ -56,6 +56,30 @@ test_that('SINU is NA, not Inf, when a reach has no usable bearings', {
   expect_equal(cs[setdiff(rownames(cs), hit), 'SINU.result'], c(1.06, 1.13, 1.07))
 })
 
+test_that('XBEARING is NA, not 0, when a reach has no usable bearings', {
+
+  # sum(p_bear, na.rm = TRUE) over an all-NA reach is 0, which used to be
+  # reported as a mean bearing of 0 (due north) with an sd of 0.
+  raw <- PHABMetrics::sampdat
+  sel <- raw$AnalyteName == 'Bearing' & raw$StationCode == '205PS0202'
+  expect_gt(sum(sel), 0)
+  raw$Result[sel] <- NA
+
+  cs <- suppressWarnings(channelsinuosity(phabformat(raw)))
+  hit <- '205PS0202_2013-07-17_MPSL-DFW'
+
+  expect_true(is.na(cs[hit, 'XBEARING.result']))
+  expect_true(is.na(cs[hit, 'XBEARING.sd']))
+
+  # unaffected reaches keep their baseline values
+  others <- setdiff(rownames(cs), hit)
+  expect_equal(cs[others, 'XBEARING.result'], c(277.7, 307.3, 220.0))
+  expect_equal(cs[others, 'XBEARING.sd'],     c(21.0, 29.1, 21.6))
+
+  # the internal helper column must not leak into the output
+  expect_false('n_bear' %in% colnames(cs))
+})
+
 test_that('XSLOPE handles gradient recorded as Slope, as Elevation Difference, or both', {
 
   xslope <- function(drop) {

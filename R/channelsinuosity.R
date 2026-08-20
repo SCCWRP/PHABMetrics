@@ -102,12 +102,26 @@ channelsinuosity <- function(data){
     dplyr::group_by(id, LocationCode) %>%
     dplyr::summarize(
       total_proportion = sum(Proportion, na.rm = T),
-      total_bearing = sum(p_bear, na.rm = T)
+      total_bearing = sum(p_bear, na.rm = T),
+      # how many bearings actually contributed to total_bearing
+      n_bear = sum(!is.na(p_bear))
     ) %>%
     dplyr::summarize(
       XBEARING.count = sum(total_proportion == 1, na.rm = T),
-      XBEARING.result = sum(total_bearing, na.rm = T) / XBEARING.count %>% round,
-      XBEARING.sd = sd(total_bearing[total_proportion == 1], na.rm = T) %>% round(1)
+      # sum(p_bear, na.rm = TRUE) over a reach with no usable bearings is 0, so
+      # XBEARING used to report a mean bearing of 0 -- due north -- rather than
+      # "not measured", and an sd of 0 rather than NA. Guard both the same way
+      # SINU is guarded below: no usable bearings means undefined, not zero.
+      XBEARING.result = ifelse(
+        sum(n_bear, na.rm = T) > 0 & XBEARING.count > 0,
+        sum(total_bearing, na.rm = T) / round(XBEARING.count),
+        NA_real_
+      ),
+      XBEARING.sd = ifelse(
+        sum(n_bear, na.rm = T) > 0,
+        sd(total_bearing[total_proportion == 1], na.rm = T) %>% round(1),
+        NA_real_
+      )
     )
   
   # SINUS -------------------------------------------------------------------------------------
