@@ -43,31 +43,26 @@ channelsinuosity <- function(data){
     dplyr::mutate(grouped_id = dplyr::row_number()) %>%
     tidyr::spread(AnalyteName, Result)
   
-  if (all(c('Elevation Difference', 'Length, Segment', 'Slope') %in% colnames(data_spread))) {
-    data_spread <- data_spread %>%
-      dplyr::mutate(
-        Slope = ifelse(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope) ,
-        p_slope = Slope * Proportion,
-        p_bear = Bearing * Proportion
-      )
-  } else if (all(c('Elevation Difference','Length, Segment') %in% colnames(data_spread))) {
-    data_spread <- data_spread %>%
-      dplyr::mutate(
-        Slope = `Elevation Difference`/`Length, Segment` * 100,
-        p_slope = Slope * Proportion,
-        p_bear = Bearing * Proportion
-      )
-  } else if ('Slope' %in% colnames(data_spread)) {
-    data_spread <- data_spread %>%
-      dplyr::mutate(
-        # Slope = Slope,
-        p_slope = Slope * Proportion,
-        p_bear = Bearing * Proportion
-      )
-  } else {
+  # Gradient arrives either as 'Slope' or as 'Elevation Difference' (often both,
+  # varying by site within one dataset). This used to branch on which columns the
+  # spread produced, which meant each combination took a different code path and
+  # emitted a warning about missing analytes. Instead, make any absent column an
+  # explicit NA and use one expression: take Slope where it was recorded, and
+  # fall back to Elevation Difference / Length, Segment where it was not.
+  if (!any(c('Slope', 'Elevation Difference') %in% colnames(data_spread))) {
     stop("Unable to calculate metrics for channelsinuosity. Missing Analytes 'Slope', and/or 'Elevation Difference'")
-    return(data.frame())
   }
+  
+  for (nm in c('Slope', 'Elevation Difference', 'Length, Segment')) {
+    if (!(nm %in% colnames(data_spread))) data_spread[[nm]] <- NA_real_
+  }
+  
+  data_spread <- data_spread %>%
+    dplyr::mutate(
+      Slope = dplyr::if_else(is.na(Slope), `Elevation Difference`/`Length, Segment` * 100, Slope),
+      p_slope = Slope * Proportion,
+      p_bear = Bearing * Proportion
+    )
   
   ## XSLOPE calculation --------------------------------------------------------------------------
   XSLOPE <- data_spread %>% 
@@ -124,7 +119,14 @@ channelsinuosity <- function(data){
     dplyr::summarize(
       cos_ = sum((`Length, Segment` * cos(angle)), na.rm = T)^2,
       sin_ = sum((`Length, Segment` * sin(angle)), na.rm = T)^2,
-      SINU.result = round(sum(`Length, Segment`, na.rm = T)/sqrt(sum(cos_, sin_, na.rm=T)), 2 ),
+      # A reach with no usable bearings gives cos_ + sin_ == 0, so the sqrt()
+      # denominator is 0 and SINU comes back Inf. Report NA instead: sinuosity
+      # is undefined here, not infinite.
+      SINU.result = ifelse(
+        sum(cos_, sin_, na.rm = T) > 0,
+        round(sum(`Length, Segment`, na.rm = T)/sqrt(sum(cos_, sin_, na.rm=T)), 2 ),
+        NA_real_
+      ),
       SINU.count = sum((!is.na(`Length, Segment`)) & (!is.na(Bearing)) )
     ) %>% 
     dplyr::mutate(

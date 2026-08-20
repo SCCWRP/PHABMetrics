@@ -103,12 +103,14 @@ substrate <- function(data){
   result$PCT_BIGR.result <- result$PCT_RS.result + result$PCT_RR.result + result$PCT_XB.result + result$PCT_SB.result + result$PCT_CB.result + result$PCT_GC.result
   result$PCT_SFGF.result <- result$PCT_GF.result + result$PCT_SA.result + result$PCT_FN.result
   result$PCT_SAFN.result <- result$PCT_SA.result + result$PCT_FN.result
+  result$PCT_SAFNRC.result <- result$PCT_SAFN.result + result$PCT_RC.result
   
   # print("Getting the counts for those metrics")
   result$PCT_BDRK.count <- rowSums(!is.na(result[,c('PCT_RS.result', 'PCT_RR.result')]))
   result$PCT_BIGR.count <- rowSums(!is.na(result[,c('PCT_RS.result', 'PCT_RR.result', 'PCT_XB.result', 'PCT_SB.result', 'PCT_CB.result', 'PCT_GC.result')]))
   result$PCT_SFGF.count <- rowSums(!is.na(result[,c('PCT_GF.result', 'PCT_SA.result', 'PCT_FN.result')]))
   result$PCT_SAFN.count <- rowSums(!is.na(result[,c('PCT_SA.result', 'PCT_FN.result')]))
+  result$PCT_SAFNRC.count <- rowSums(!is.na(result[,c('PCT_SA.result', 'PCT_FN.result', 'PCT_RC.result')]))
   
   result <- round(result)
     

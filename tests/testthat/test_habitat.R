@@ -7,7 +7,7 @@ test_that('habitat() returns the expected samples in the expected order', {
 })
 
 test_that('habitat() returns the expected columns', {
-  expect_equal(colnames(habitatmet), c('XFC_AQM.result', 'XFC_AQM.count', 'XFC_AQM.sd', 'XFC_HUM.result', 'XFC_HUM.count', 'XFC_HUM.sd', 'XFC_RCK.result', 'XFC_RCK.count', 'XFC_RCK.sd', 'XFC_ALG.result', 'XFC_ALG.count', 'XFC_ALG.sd', 'XFC_LWD.result', 'XFC_LWD.count', 'XFC_LWD.sd', 'XFC_LTR.result', 'XFC_LTR.count', 'XFC_LTR.sd', 'XFC_OHV.result', 'XFC_OHV.count', 'XFC_OHV.sd', 'XFC_BRS.result', 'XFC_BRS.count', 'XFC_BRS.sd', 'XFC_UCB.result', 'XFC_UCB.count', 'XFC_UCB.sd', 'XFC_BIG.result', 'XFC_NAT_EMAP.result', 'XFC_NAT_SWAMP.result', 'CFC_AQM.result', 'CFC_HUM.result', 'CFC_RCK.result', 'CFC_ALG.result', 'CFC_LWD.result', 'CFC_LTR.result', 'CFC_OHV.result', 'CFC_BRS.result', 'CFC_UCB.result', 'CFC_ALL_EMAP.result', 'CFC_ALL_SWAMP.result', 'XFC_BIG.count', 'XFC_NAT_EMAP.count', 'XFC_NAT_SWAMP.count', 'CFC_ALL_EMAP.count', 'CFC_ALL_SWAMP.count', 'H_AqHab.result', 'H_AqHab_mod1.result', 'H_AqHab.count', 'Ev_AqHab.result', 'Ev_AqHab.count', 'CFC_ALG.count', 'CFC_AQM.count', 'CFC_BRS.count', 'CFC_HUM.count', 'CFC_LTR.count', 'CFC_LWD.count', 'CFC_OHV.count', 'CFC_RCK.count', 'CFC_UCB.count', 'Rich_AqHab.result', 'Rich_AqHab.count'))
+  expect_equal(colnames(habitatmet), c('XFC_AQM.result', 'XFC_AQM.count', 'XFC_AQM.sd', 'XFC_HUM.result', 'XFC_HUM.count', 'XFC_HUM.sd', 'XFC_RCK.result', 'XFC_RCK.count', 'XFC_RCK.sd', 'XFC_ALG.result', 'XFC_ALG.count', 'XFC_ALG.sd', 'XFC_LWD.result', 'XFC_LWD.count', 'XFC_LWD.sd', 'XFC_LTR.result', 'XFC_LTR.count', 'XFC_LTR.sd', 'XFC_OHV.result', 'XFC_OHV.count', 'XFC_OHV.sd', 'XFC_BRS.result', 'XFC_BRS.count', 'XFC_BRS.sd', 'XFC_UCB.result', 'XFC_UCB.count', 'XFC_UCB.sd', 'XFC_BIG.result', 'XFC_NAT_EMAP.result', 'XFC_NAT_SWAMP.result', 'CFC_AQM.result', 'CFC_HUM.result', 'CFC_RCK.result', 'CFC_ALG.result', 'CFC_LWD.result', 'CFC_LTR.result', 'CFC_OHV.result', 'CFC_BRS.result', 'CFC_UCB.result', 'CFC_ALL_EMAP.result', 'CFC_ALL_SWAMP.result', 'XFC_BIG.count', 'XFC_BIG3.result', 'XFC_BIG3.count', 'XFC_NAT_EMAP.count', 'XFC_NAT_SWAMP.count', 'CFC_ALL_EMAP.count', 'CFC_ALL_SWAMP.count', 'H_AqHab.result', 'H_AqHab_mod1.result', 'H_AqHab.count', 'Ev_AqHab.result', 'Ev_AqHab.count', 'CFC_ALG.count', 'CFC_AQM.count', 'CFC_BRS.count', 'CFC_HUM.count', 'CFC_LTR.count', 'CFC_LWD.count', 'CFC_OHV.count', 'CFC_RCK.count', 'CFC_UCB.count', 'Rich_AqHab.result', 'Rich_AqHab.count'))
 })
 
 test_that('Checking XFC_AQM.result', {
@@ -176,6 +176,14 @@ test_that('Checking CFC_ALL_SWAMP.result', {
 
 test_that('Checking XFC_BIG.count', {
   expect_equal(as.vector(habitatmet$XFC_BIG.count), c(4, 4, 4, 4))
+})
+
+test_that('Checking XFC_BIG3.result', {
+  expect_equal(as.vector(habitatmet$XFC_BIG3.result), c(1.8, 30, 18.7, 54.7))
+})
+
+test_that('Checking XFC_BIG3.count', {
+  expect_equal(as.vector(habitatmet$XFC_BIG3.count), c(3, 3, 3, 3))
 })
 
 test_that('Checking XFC_NAT_EMAP.count', {

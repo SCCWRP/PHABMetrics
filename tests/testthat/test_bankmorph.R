@@ -7,7 +7,7 @@ test_that('bankmorph() returns the expected samples in the expected order', {
 })
 
 test_that('bankmorph() returns the expected columns', {
-  expect_equal(colnames(bankmorphmet), c('XBKF_H.result', 'XBKF_H.count', 'XBKF_H.sd', 'XBKF_W.result', 'XBKF_W.count', 'XBKF_W.sd', 'XWDEPTH.result', 'XWDEPTH.count', 'XWDEPTH.sd', 'XWIDTH.result', 'XWIDTH.count', 'XWIDTH.sd', 'XWDR.result', 'XWDR.count', 'XWDA.result', 'XWDA.count', 'XWDM.count', 'XWDM.result', 'XWDM.sd'))
+  expect_equal(colnames(bankmorphmet), c('XBKF_H.result', 'XBKF_H.count', 'XBKF_H.sd', 'XBKF_W.result', 'XBKF_W.count', 'XBKF_W.sd', 'XWDEPTH.result', 'XWDEPTH.count', 'XWDEPTH.sd', 'XWIDTH.result', 'XWIDTH.count', 'XWIDTH.sd', 'XWDR.result', 'XWDR.count', 'XWDA.result', 'XWDA.count', 'XWDM.count', 'XWDM.result', 'XWDM.sd', 'XBKF_TH.result', 'XBKF_TH.count', 'XBKF_DA.result', 'XBKF_DA.count'))
 })
 
 test_that('Checking XBKF_H.result', {
@@ -84,5 +84,21 @@ test_that('Checking XWDM.result', {
 
 test_that('Checking XWDM.sd', {
   expect_equal(as.vector(bankmorphmet$XWDM.sd), c(15.3, 9, 14.9, 53.2))
+})
+
+test_that('Checking XBKF_TH.result', {
+  expect_equal(as.vector(bankmorphmet$XBKF_TH.result), c(1.6, 0.3, 1.6, 1.1))
+})
+
+test_that('Checking XBKF_TH.count', {
+  expect_equal(as.vector(bankmorphmet$XBKF_TH.count), c(11, 11, 11, 11))
+})
+
+test_that('Checking XBKF_DA.result', {
+  expect_equal(as.vector(bankmorphmet$XBKF_DA.result), c(33.6, 1.2, 35.5, 32.3))
+})
+
+test_that('Checking XBKF_DA.count', {
+  expect_equal(as.vector(bankmorphmet$XBKF_DA.count), c(11, 11, 11, 11))
 })
 
