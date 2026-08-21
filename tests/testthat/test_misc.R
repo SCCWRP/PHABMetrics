@@ -11,7 +11,7 @@ test_that('misc() returns the expected columns', {
 })
 
 test_that('Checking NFC_DLU.result', {
-  expect_equal(as.vector(miscmet$NFC_DLU.result), c('Forest', 'Suburban, Town', 'Urban/Industrial', 'Range'))
+  expect_equal(as.vector(miscmet$NFC_DLU.result), c('FOREST', 'SUBURBAN, TOWN', 'URBAN/INDUSTRIAL', 'RANGE'))
 })
 
 test_that('Checking NFC_EFR.result', {
