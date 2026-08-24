@@ -29,7 +29,7 @@ metric_schema <- list(
     'PCT_SLOW.count', 'PCT_FAST_WT.count', 'PCT_SLOW_WT.count',
     'Rich_FlowHab.result', 'Rich_FlowHab.count', 'Rich_FlowHab4.result',
     'Rich_FlowHab4.count', 'H_FlowHab.result', 'H_FlowHab.count',
-    'Ev_FlowHab.result', 'Ev_FlowHab.count'
+    'Ev_FlowHab.result', 'Ev_FlowHab.count', 'H_FlowHab_mod1.result'
   ),
   channelsinuosity = c(
     'XSLOPE.count', 'XSLOPE.result', 'XSLOPE.sd', 'SLOPE_0.count',
