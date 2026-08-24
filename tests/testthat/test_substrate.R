@@ -250,6 +250,24 @@ test_that('Checking SB_PT_D90.result', {
   expect_equal(c(44, 75, 625, 5660), as.vector(result))
 })
 
+test_that('Checking PCT_SAFNRC.result', {
+  result <- submet$PCT_SAFNRC.result
+  expect_equal(c(50, 13, 30, 23), as.vector(result))
+})
+
+test_that('Checking PCT_SAFNRC.count', {
+  result <- submet$PCT_SAFNRC.count
+  expect_equal(c(3, 3, 3, 3), as.vector(result))
+})
+
+test_that('Checking SB_PP_D50.result', {
+  # Added 2026-08-20 to close the last untested substrate column. Baseline is
+  # current output; note the SB_*_D25/D75/D90 percentile skips below are still
+  # unresolved, so treat this family with the same caution.
+  result <- submet$SB_PP_D50.result
+  expect_equal(c(1.03, 36, 33, 96), as.vector(result))
+})
+
 test_that('Checking SB_PP_D10.result', {
   result <- submet$SB_PP_D10.result
   expect_equal(c(1.03, 1.03, 1.03, 1.03), as.vector(result))

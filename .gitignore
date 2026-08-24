@@ -7,3 +7,5 @@ R/test.R
 *.csv
 data
 AGENTS.md
+tmp/
+.DS_Store

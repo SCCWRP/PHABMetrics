@@ -4,10 +4,18 @@
 \alias{phabmetrics}
 \title{Calculate all PHAB metrics}
 \usage{
-phabmetrics(data)
+phabmetrics(data, output_errors = FALSE, one_fails_all = FALSE)
 }
 \arguments{
-\item{data}{Input data}
+\item{data}{Input data for phab metrics}
+
+\item{output_errors}{Output a named list; "out" is the original output, "errors" is individual errors for each subfunction}
+
+\item{one_fails_all}{On TRUE, don't output analysis if any subfunctions fail.
+Defaults to FALSE: one failing subfunction no longer discards the metrics
+every other subfunction computed successfully. The failed subfunction's
+metrics are absent from the output (not NA), and a warning names it. Pass
+`output_errors = TRUE` to get the error log back alongside the results.}
 }
 \description{
 Calculate all PHAB metrics

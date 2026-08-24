@@ -19,10 +19,11 @@ misc <- function(data){
   # function to get value verbatim from data
   getunival <- function(data, analyt){
 
-    out <- data %>% 
-      dplyr::filter(AnalyteName %in% !!analyt) %>% 
+    out <- data %>%
+      dplyr::filter(AnalyteName %in% !!analyt) %>%
+      dplyr::mutate(VariableResult = toupper(VariableResult)) %>%
       dplyr::select(id, VariableResult) %>%
-      unique   
+      unique
     
     return(out)
     

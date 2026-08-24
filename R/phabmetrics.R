@@ -2,7 +2,11 @@
 #'
 #' @param data Input data for phab metrics
 #' @param output_errors Output a named list; "out" is the original output, "errors" is individual errors for each subfunction
-#' @param one_fails_all On TRUE, don't output analysis if any subfunctions fail
+#' @param one_fails_all On TRUE, don't output analysis if any subfunctions fail.
+#'   Defaults to FALSE: one failing subfunction no longer discards the metrics
+#'   every other subfunction computed successfully. The failed subfunction's
+#'   metrics are absent from the output (not NA), and a warning names it. Pass
+#'   `output_errors = TRUE` to get the error log back alongside the results.
 #'
 #' @export
 #'
@@ -12,7 +16,7 @@
 #' \dontrun{
 #' phabmetrics(sampdat)
 #' }
-phabmetrics <- function(data, output_errors = FALSE, one_fails_all = TRUE) {
+phabmetrics <- function(data, output_errors = FALSE, one_fails_all = FALSE) {
   metrics = list()
   err_log = data.frame(
     func = character(),
@@ -66,9 +70,24 @@ phabmetrics <- function(data, output_errors = FALSE, one_fails_all = TRUE) {
       stop(err_log$msg)
     }
 
-    if (!is.null(res)) {
-      metrics[[f_name]] <- res
-    }
+    # Backfill against the canonical schema so a missing metric still yields a
+    # row -- NA result, 0 count -- instead of vanishing from the output, where
+    # it is indistinguishable from a metric that was never requested. Covers
+    # both a subfunction that failed outright and one that returned but was
+    # short some columns (e.g. algae without Macrophyte Cover returns 20 of 22).
+    metrics[[f_name]] <- fill_metric_schema(res, f_name, unique(data$id))
+  }
+
+  # A failed subfunction's metrics are simply absent from the output rather than
+  # NA, which is indistinguishable from "never requested". Warn so the caller
+  # knows something dropped; output_errors = TRUE returns the detail.
+  if (!output_errors && nrow(err_log) > 0) {
+    warning(
+      "phabmetrics: these subfunctions failed and their metrics are missing from the output: ",
+      paste(err_log$func, collapse = ", "),
+      ". Re-run with output_errors = TRUE to see the errors.",
+      call. = FALSE
+    )
   }
 
   # combine seprate metrics lists

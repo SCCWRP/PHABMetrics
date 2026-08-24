@@ -65,6 +65,14 @@ habitat <- function(data){
   
   result$XFC_BIG.count <- rowSums(!is.na(result[,c('XFC_LWD.result','XFC_RCK.result','XFC_UCB.result','XFC_HUM.result')]))
   
+  # XFC_BIG3 is XFC_BIG restricted to the three natural large-cover types --
+  # large woody debris, boulders and undercut banks -- dropping the artificial
+  # structures (HUM) term.
+  result$XFC_BIG3.result <- result$XFC_LWD.result + result$XFC_RCK.result +
+    result$XFC_UCB.result
+  
+  result$XFC_BIG3.count <- rowSums(!is.na(result[,c('XFC_LWD.result','XFC_RCK.result','XFC_UCB.result')]))
+  
   result$XFC_NAT_EMAP.result <- result$XFC_LWD.result + result$XFC_BRS.result +
     result$XFC_OHV.result + result$XFC_RCK.result + result$XFC_UCB.result
   

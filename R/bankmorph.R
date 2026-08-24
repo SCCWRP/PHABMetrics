@@ -120,6 +120,11 @@ bankmorph <- function(data){
     dplyr::filter(AnalyteName == 'StationWaterDepth', MethodName == 'FieldMeasure') %>% 
     dplyr::group_by(id, LocationCode2) %>% 
     dplyr::summarize(Result = max(Result, na.rm = T)) %>% 
+    # max() over an all-NA transect returns -Inf, which then propagates through
+    # mean() and collapses XWDM to -Inf even when other transects are fine. Drop
+    # those transects so the metric is computed from the readings that do exist,
+    # and so XWDM.count reflects the real number of transects.
+    dplyr::filter(is.finite(Result)) %>% 
     dplyr::group_by(id) %>% 
     tidyr::nest() %>%
     dplyr::mutate(
@@ -141,6 +146,21 @@ bankmorph <- function(data){
                    XWDEPTH.count, XWDEPTH.sd, XWIDTH.result, XWIDTH.count, XWIDTH.sd, XWDR.result, XWDR.count, 
                    XWDA.result, XWDA.count)
   results <- merge(results, XWDM, by = 'row.names') %>% tibble::column_to_rownames('Row.names')
+
+  ###XBKF_TH###
+  # Total bankfull height: bankfull height plus max water depth, in metres.
+  # XBKF_H is reported in m and XWDM in cm, so XWDM is converted before the sum
+  # -- otherwise the cm term swamps the m term and XBKF_H barely contributes.
+  XBKF_TH_raw <- results$XBKF_H.result + (results$XWDM.result / 100)
+  results$XBKF_TH.result <- round(XBKF_TH_raw, 1)
+  results$XBKF_TH.count <- pmin(results$XBKF_H.count, results$XWDM.count)
+
+  ###XBKF_DA###
+  # Bankfull cross-sectional area (m2): total bankfull height x bankfull width.
+  # Multiplied from the unrounded height -- rounding XBKF_TH to 1 dp first shifts
+  # the area by up to ~3% on shallow sites.
+  results$XBKF_DA.result <- round(XBKF_TH_raw * results$XBKF_W.result, 1)
+  results$XBKF_DA.count <- pmin(results$XBKF_TH.count, results$XBKF_W.count)
 
   return(results)
 }
