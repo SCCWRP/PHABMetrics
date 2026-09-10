@@ -24,7 +24,9 @@ c('XMIAT_SDSs', 'XMIATP_SDSs', '.', 'AnalyteName', 'LocationCode', 'LocationCode
   # Global Variables for substrate
   'aggregate','value','value2','indices','median',
   # Global Variables for longformat
-  'phab_sampleid'
+  'phab_sampleid',
+  # Global Variables for XSSP (phabmetrics.R)
+  'XSLOPE.result','XSLOPE.count','XWDM.result','XWDM.count','XWIDTH.result','XWIDTH.count'
 ))
 
 #' @importFrom stats quantile sd aggregate median na.omit
