@@ -233,9 +233,52 @@ channelmorph <- function(data){
     as.data.frame(stringsAsFactors = F) %>%
     tibble::column_to_rownames('id')
 
+  ############## Shannon of Flow habitats by Transect
+
+  FlowHab_mod1 <- data %>%
+    dplyr::select(id, AnalyteName, LocationCode, Result) %>%
+    tidyr::unnest() %>%
+    dplyr::group_by(id, LocationCode) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      H_FlowHab_mod1.result = purrr::map(data, function(data){ # this produces shannon by transect now
+
+        # step 2
+        sms <- data %>%
+          dplyr::filter(!AnalyteName %in% 'Dry') %>%
+          dplyr::group_by(AnalyteName) %>%
+          dplyr::summarise(Result = sumna(Result))
+
+        # step 3
+        smgrz <- sum(sms$Result, na.rm = T)
+
+        # step 4
+        smspi <- sms$Result / smgrz
+
+        # step 5
+        smspimlt <- smspi * log(smspi)
+
+        # step 6
+        res <- sum(smspimlt, na.rm = T) * -1
+
+        return(res)
+
+      })
+    ) %>%
+    dplyr::mutate(H_FlowHab_mod1.result = H_FlowHab_mod1.result %>% as.numeric()) %>%
+    dplyr::group_by(id) %>% # summarise again, but only by id this time
+    dplyr::summarise(H_FlowHab_mod1.result = mean(H_FlowHab_mod1.result)) %>%
+    as.data.frame(stringsAsFactors = F) %>%
+    tibble::column_to_rownames('id')
+
   # Now we should round the H_FlowHab.result value to 2 decimal places
   FlowHab$H_FlowHab.result <- round(FlowHab$H_FlowHab.result, 2)
-  
+
+  # round H_FlowHab_mod1, then merge into FlowHab
+  FlowHab_mod1$H_FlowHab_mod1.result <- round(FlowHab_mod1$H_FlowHab_mod1.result, 2)
+  FlowHab <- merge(FlowHab, FlowHab_mod1, by = 'row.names') %>%
+    tibble::column_to_rownames('Row.names')
+
   # add H_FlowHab, Ev_FlowHab to results
   results <- as.data.frame(results, stringsAsFactors = F)
   

@@ -112,6 +112,17 @@ phabmetrics <- function(data, output_errors = FALSE, one_fails_all = FALSE) {
       as.numeric
     )
 
+  # XSSP: specific stream power, (XSLOPE * XWDM) / XWIDTH. Added 2026-09-10 per
+  # Lara's request (Ballard et al. 2024, ecs2.4688) as a rough discharge proxy.
+  # XSLOPE comes from channelsinuosity(); XWDM/XWIDTH come from bankmorph() --
+  # neither subfunction sees the other's inputs, so this can only be computed
+  # here, after both are merged into `out`.
+  out <- out %>%
+    dplyr::mutate(
+      XSSP.result = round((XSLOPE.result * XWDM.result) / XWIDTH.result, 2),
+      XSSP.count = pmin(XSLOPE.count, XWDM.count, XWIDTH.count)
+    )
+
   out <- out %>%
     dplyr::left_join(
       data %>%

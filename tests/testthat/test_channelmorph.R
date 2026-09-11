@@ -7,7 +7,7 @@ test_that('channelmorph() returns the expected samples in the expected order', {
 })
 
 test_that('channelmorph() returns the expected columns', {
-  expect_equal(colnames(channelmorphmet), c('PCT_CF.result', 'PCT_CF.count', 'PCT_CF.sd', 'PCT_DR.result', 'PCT_DR.count', 'PCT_DR.sd', 'PCT_GL.result', 'PCT_GL.count', 'PCT_GL.sd', 'PCT_POOL.result', 'PCT_POOL.count', 'PCT_POOL.sd', 'PCT_RA.result', 'PCT_RA.count', 'PCT_RA.sd', 'PCT_RI.result', 'PCT_RI.count', 'PCT_RI.sd', 'PCT_RN.result', 'PCT_RN.count', 'PCT_RN.sd', 'PCT_FAST.result', 'PCT_SLOW.result', 'PCT_CF_WT.result', 'PCT_CF_WT.count', 'PCT_GL_WT.result', 'PCT_GL_WT.count', 'PCT_POOL_WT.result', 'PCT_POOL_WT.count', 'PCT_RA_WT.result', 'PCT_RA_WT.count', 'PCT_RI_WT.result', 'PCT_RI_WT.count', 'PCT_RN_WT.result', 'PCT_RN_WT.count', 'PCT_FAST_WT.result', 'PCT_SLOW_WT.result', 'PCT_FAST.count', 'PCT_SLOW.count', 'PCT_FAST_WT.count', 'PCT_SLOW_WT.count', 'Rich_FlowHab.result', 'Rich_FlowHab.count', 'Rich_FlowHab4.result', 'Rich_FlowHab4.count', 'H_FlowHab.result', 'H_FlowHab.count', 'Ev_FlowHab.result', 'Ev_FlowHab.count'))
+  expect_equal(colnames(channelmorphmet), c('PCT_CF.result', 'PCT_CF.count', 'PCT_CF.sd', 'PCT_DR.result', 'PCT_DR.count', 'PCT_DR.sd', 'PCT_GL.result', 'PCT_GL.count', 'PCT_GL.sd', 'PCT_POOL.result', 'PCT_POOL.count', 'PCT_POOL.sd', 'PCT_RA.result', 'PCT_RA.count', 'PCT_RA.sd', 'PCT_RI.result', 'PCT_RI.count', 'PCT_RI.sd', 'PCT_RN.result', 'PCT_RN.count', 'PCT_RN.sd', 'PCT_FAST.result', 'PCT_SLOW.result', 'PCT_CF_WT.result', 'PCT_CF_WT.count', 'PCT_GL_WT.result', 'PCT_GL_WT.count', 'PCT_POOL_WT.result', 'PCT_POOL_WT.count', 'PCT_RA_WT.result', 'PCT_RA_WT.count', 'PCT_RI_WT.result', 'PCT_RI_WT.count', 'PCT_RN_WT.result', 'PCT_RN_WT.count', 'PCT_FAST_WT.result', 'PCT_SLOW_WT.result', 'PCT_FAST.count', 'PCT_SLOW.count', 'PCT_FAST_WT.count', 'PCT_SLOW_WT.count', 'Rich_FlowHab.result', 'Rich_FlowHab.count', 'Rich_FlowHab4.result', 'Rich_FlowHab4.count', 'H_FlowHab.result', 'H_FlowHab.count', 'Ev_FlowHab.result', 'Ev_FlowHab.count', 'H_FlowHab_mod1.result'))
 })
 
 test_that('Checking PCT_CF.result', {
@@ -204,5 +204,9 @@ test_that('Checking Ev_FlowHab.result', {
 
 test_that('Checking Ev_FlowHab.count', {
   expect_equal(as.vector(channelmorphmet$Ev_FlowHab.count), c(1, 2, 4, 5))
+})
+
+test_that('Checking H_FlowHab_mod1.result', {
+  expect_equal(as.vector(channelmorphmet$H_FlowHab_mod1.result), c(0, 0.51, 0.19, 0.72))
 })
 
